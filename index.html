@@ -2,167 +2,308 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0b0f14">
+<meta name="theme-color" content="#080b11">
 <title>Ronda Planta — SAICAPAPER</title>
 <link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700;900&family=JetBrains+Mono:wght@700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  --bg:#0b0f14;--bg2:#111720;--bg3:#0f1520;--border:#1e293b;--border2:#1a2332;
-  --t1:#e2e8f0;--t2:#cbd5e1;--t3:#94a3b8;--t4:#64748b;--t5:#475569;
-  --green:#4ade80;--green-d:#16a34a;--blue:#3b82f6;--blue-d:#1e40af;
-  --red:#dc2626;--amber:#fbbf24;--cyan:#06b6d4;
+:root {
+  --bg-deep: #060910;
+  --bg-base: #0a0e17;
+  --bg-card: #0f1420;
+  --bg-elevated: #141a28;
+  --bg-input: #111827;
+  --border-subtle: #1a2035;
+  --border-main: #1e2a42;
+  --border-focus: #3b82f6;
+  --text-primary: #f0f4f8;
+  --text-secondary: #b0bdd0;
+  --text-tertiary: #6b7fa0;
+  --text-muted: #3e4f6e;
+  --accent: #22d37e;
+  --accent-glow: #22d37e44;
+  --accent-dark: #16a35a;
+  --blue: #3b82f6;
+  --blue-dark: #1e3a8a;
+  --blue-glow: #3b82f622;
+  --red: #ef4444;
+  --red-dark: #7f1d1d;
+  --red-glow: #ef444422;
+  --amber: #f59e0b;
+  --amber-glow: #f59e0b22;
 }
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:'DM Sans',system-ui,sans-serif}
+html,body{height:100%;overflow:hidden;background:var(--bg-deep);color:var(--text-primary);font-family:'Raleway',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 
-/* ── LAYOUT ── */
+/* ═══════ LAYOUT ═══════ */
 #app{display:flex;flex-direction:column;height:100%;overflow:hidden}
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:8;z-index:50}
-.logo{display:flex;align-items:center;gap:8}
-.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
-.logo-text{font-size:13px;font-weight:900;letter-spacing:3px;color:var(--green);text-transform:uppercase}
-.logo-sub{font-size:12px;color:var(--t5);font-weight:700}
-.turno-box{display:flex;gap:4px}
-.turno-btn{padding:7px 14px;font-size:14px;font-weight:800;border-radius:8px;border:2px solid var(--border);background:transparent;color:var(--t4);cursor:pointer;font-family:inherit;transition:all .15s}
-.turno-btn.active{background:var(--green);color:var(--bg);border-color:var(--green)}
+.main-content{flex:1;overflow:hidden;display:flex;flex-direction:column}
 
-/* ── ZONE TABS ── */
-.zone-bar{display:flex;overflow-x:auto;background:var(--bg3);border-bottom:2px solid var(--border2);flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;z-index:40}
-.zone-bar::-webkit-scrollbar{display:none}
-.zone-tab{padding:11px 16px;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;color:var(--t5);transition:all .15s;position:relative;user-select:none;flex-shrink:0}
-.zone-tab.active{color:#fff;background:var(--bg2)}
-.zone-tab .zpct{margin-left:5px;font-size:10px;font-weight:900}
+/* ═══════ TOPBAR ═══════ */
+.topbar{
+  background:linear-gradient(180deg, #0c1019 0%, #0a0e17 100%);
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+  border-bottom:1px solid var(--border-subtle);position:relative;z-index:60;
+}
+.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent)33,transparent)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#0ea860);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;letter-spacing:-1px;box-shadow:0 2px 12px var(--accent-glow)}
+.brand-text{display:flex;flex-direction:column}
+.brand-name{font-size:14px;font-weight:800;letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;line-height:1}
+.brand-sub{font-size:10px;font-weight:600;color:var(--text-tertiary);letter-spacing:1px;margin-top:2px}
+.top-right{display:flex;align-items:center;gap:10px}
+.date-badge{font-size:11px;font-weight:700;color:var(--text-tertiary);background:var(--bg-elevated);padding:5px 10px;border-radius:6px;border:1px solid var(--border-subtle)}
+.turno-group{display:flex;gap:3px;background:var(--bg-card);border-radius:10px;padding:3px;border:1px solid var(--border-subtle)}
+.turno-btn{padding:6px 14px;font-size:12px;font-weight:800;border-radius:7px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all .2s;letter-spacing:0.5px}
+.turno-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px var(--accent-glow)}
 
-/* ── BODY ── */
-.body{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
-.sec-header{position:sticky;top:0;z-index:10;padding:13px 18px;font-size:18px;font-weight:900;color:#fff;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.sec-badge{font-size:12px;font-weight:800;padding:3px 10px;border-radius:12px}
+/* ═══════ ZONE NAV ═══════ */
+.zone-nav{
+  background:var(--bg-base);flex-shrink:0;border-bottom:1px solid var(--border-subtle);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;padding:0 8px;
+}
+.zone-nav::-webkit-scrollbar{display:none}
+.zone-chip{
+  padding:10px 16px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;
+  color:var(--text-muted);transition:all .2s;position:relative;letter-spacing:0.8px;text-transform:uppercase;
+  border-bottom:2px solid transparent;flex-shrink:0;
+}
+.zone-chip:hover{color:var(--text-tertiary)}
+.zone-chip.active{color:var(--text-primary)}
+.zone-chip .zp{font-size:9px;font-weight:700;margin-left:4px;vertical-align:super}
 
-/* ── ITEM ROWS ── */
-.item{padding:14px 18px;border-bottom:1px solid #141c28;transition:background .15s}
-.item.filled{background:#0d1a12}
-.item-label{font-size:17px;font-weight:700;color:var(--t2);margin-bottom:10px;line-height:1.35;display:flex;gap:8px;align-items:flex-start}
-.item-dot{width:8px;height:8px;border-radius:50%;background:var(--t5);margin-top:7px;flex-shrink:0;transition:background .2s}
-.item.filled .item-dot{background:var(--green)}
-.item-note{font-size:13px;color:var(--t4);margin-bottom:8px;margin-left:16px;font-weight:600}
-.item-ctrl{margin-left:16px}
+/* ═══════ SECTION NAV ═══════ */
+.sec-nav{
+  background:var(--bg-card);flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;display:flex;gap:0;padding:0 12px;
+  border-bottom:1px solid var(--border-subtle);
+}
+.sec-nav::-webkit-scrollbar{display:none}
+.sec-chip{
+  padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;
+  color:var(--text-muted);transition:all .2s;position:relative;flex-shrink:0;
+  border-bottom:2px solid transparent;
+}
+.sec-chip.active{color:var(--text-primary);border-bottom-color:var(--blue)}
+.sec-chip .sp{
+  display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:5px;vertical-align:middle;
+}
 
-/* ── BUTTONS OK/NOK ── */
-.btn-row{display:flex;gap:8px}
-.btn-ok,.btn-nok,.btn-yn,.btn-br{flex:1;padding:12px 0;font-size:18px;font-weight:900;border-radius:10px;border:3px solid var(--border);background:var(--bg2);color:var(--t5);cursor:pointer;font-family:inherit;transition:all .12s;text-align:center}
-.btn-ok.active{background:var(--green-d);border-color:var(--green-d);color:#fff}
-.btn-nok.active{background:var(--red);border-color:var(--red);color:#fff}
-.btn-yn.active-si{background:var(--green-d);border-color:var(--green-d);color:#fff}
-.btn-yn.active-no{background:var(--red);border-color:var(--red);color:#fff}
-.btn-br.active-b{background:#64748b;border-color:#64748b;color:#fff}
-.btn-br.active-r{background:var(--red);border-color:var(--red);color:#fff}
+/* ═══════ SCROLLABLE BODY ═══════ */
+.body{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:100px}
 
-/* ── SEL BUTTONS ── */
+/* ═══════ SECTION HEADER IN BODY ═══════ */
+.sec-title-bar{
+  padding:16px 20px 10px;display:flex;align-items:center;justify-content:space-between;
+}
+.sec-title-text{font-size:17px;font-weight:800;color:var(--text-primary);letter-spacing:0.3px}
+.sec-title-badge{
+  font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;
+}
+
+/* ═══════ ITEM ROW ═══════ */
+.item{
+  padding:14px 20px;border-bottom:1px solid var(--border-subtle);
+  transition:background .2s,border-color .2s;position:relative;
+}
+.item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0 3px 3px 0;
+  background:transparent;transition:background .2s;
+}
+.item.filled{background:var(--accent-glow)}
+.item.filled::before{background:var(--accent)}
+.item-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.item-indicator{
+  width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0;
+  background:var(--text-muted);transition:all .25s;
+}
+.item.filled .item-indicator{background:var(--accent);box-shadow:0 0 6px var(--accent-glow)}
+.item-label{font-size:16px;font-weight:700;color:var(--text-secondary);line-height:1.4;flex:1}
+.item.filled .item-label{color:var(--text-primary)}
+.item-limit{
+  font-size:11px;font-weight:700;color:var(--text-muted);background:var(--bg-elevated);
+  padding:2px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-top:3px;
+  border:1px solid var(--border-subtle);font-family:'JetBrains Mono',monospace;
+}
+.item-note{font-size:12px;color:var(--text-tertiary);margin:0 0 8px 18px;font-weight:600}
+.item-ctrl{margin-left:18px}
+
+/* ═══════ OK / NOK BUTTONS ═══════ */
+.btn-pair{display:flex;gap:8px}
+.btn-ok,.btn-nok{
+  flex:1;padding:13px 0;font-size:16px;font-weight:900;border-radius:10px;
+  border:2px solid var(--border-main);background:var(--bg-input);
+  color:var(--text-muted);cursor:pointer;font-family:'Raleway',sans-serif;
+  transition:all .15s;letter-spacing:1px;text-align:center;
+}
+.btn-ok:active,.btn-nok:active{transform:scale(0.97)}
+.btn-ok.on{background:linear-gradient(135deg,#16a34a,#15803d);border-color:#22c55e;color:#fff;box-shadow:0 2px 12px #16a34a44}
+.btn-nok.on{background:linear-gradient(135deg,#dc2626,#b91c1c);border-color:#ef4444;color:#fff;box-shadow:0 2px 12px #dc262644}
+
+/* ═══════ YES / NO ═══════ */
+.btn-si,.btn-no{
+  flex:1;padding:13px 0;font-size:16px;font-weight:900;border-radius:10px;
+  border:2px solid var(--border-main);background:var(--bg-input);
+  color:var(--text-muted);cursor:pointer;font-family:'Raleway',sans-serif;
+  transition:all .15s;letter-spacing:1px;text-align:center;
+}
+.btn-si.on{background:linear-gradient(135deg,#16a34a,#15803d);border-color:#22c55e;color:#fff;box-shadow:0 2px 12px #16a34a44}
+.btn-no.on{background:linear-gradient(135deg,#dc2626,#b91c1c);border-color:#ef4444;color:#fff;box-shadow:0 2px 12px #dc262644}
+
+/* ═══════ BLANCO / ROJO ═══════ */
+.btn-bl,.btn-rj{
+  flex:1;padding:13px 0;font-size:15px;font-weight:900;border-radius:10px;
+  border:2px solid var(--border-main);background:var(--bg-input);
+  color:var(--text-muted);cursor:pointer;font-family:'Raleway',sans-serif;
+  transition:all .15s;letter-spacing:0.5px;text-align:center;
+}
+.btn-bl.on{background:linear-gradient(135deg,#475569,#334155);border-color:#64748b;color:#fff;box-shadow:0 2px 12px #47556944}
+.btn-rj.on{background:linear-gradient(135deg,#dc2626,#b91c1c);border-color:#ef4444;color:#fff;box-shadow:0 2px 12px #dc262644}
+
+/* ═══════ SELECTION CHIPS ═══════ */
 .sel-row{display:flex;gap:6px;flex-wrap:wrap}
-.sel-btn{padding:11px 15px;font-size:16px;font-weight:800;border-radius:10px;border:2px solid var(--border);background:var(--bg2);color:var(--t4);cursor:pointer;font-family:inherit;min-width:56px;text-align:center;transition:all .12s}
-.sel-btn.active{background:var(--blue-d);border-color:var(--blue);color:#fff}
+.sel-btn{
+  padding:11px 16px;font-size:14px;font-weight:800;border-radius:9px;
+  border:2px solid var(--border-main);background:var(--bg-input);
+  color:var(--text-muted);cursor:pointer;font-family:'Raleway',sans-serif;
+  transition:all .15s;min-width:54px;text-align:center;
+}
+.sel-btn:active{transform:scale(0.96)}
+.sel-btn.on{background:linear-gradient(135deg,#1e40af,#1d4ed8);border-color:var(--blue);color:#fff;box-shadow:0 2px 10px var(--blue-glow)}
 
-/* ── NUM INPUT ── */
+/* ═══════ NUM INPUT ═══════ */
 .num-wrap{position:relative}
-.num-input{width:100%;padding:12px 16px;font-size:21px;font-weight:800;border-radius:10px;border:2px solid var(--border);background:var(--bg2);color:var(--t1);outline:none;font-family:'JetBrains Mono',monospace;box-sizing:border-box}
-.num-input:focus{border-color:var(--blue)}
-.num-limit{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--t4);font-weight:700;pointer-events:none}
+.num-input{
+  width:100%;padding:13px 16px;font-size:20px;font-weight:700;border-radius:10px;
+  border:2px solid var(--border-main);background:var(--bg-input);color:var(--text-primary);
+  outline:none;font-family:'JetBrains Mono',monospace;box-sizing:border-box;
+  transition:border-color .2s,box-shadow .2s;
+}
+.num-input::placeholder{color:var(--text-muted)}
+.num-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-glow)}
 
-/* ── TEXT INPUT ── */
-.text-input{width:100%;padding:12px 16px;font-size:18px;font-weight:700;border-radius:10px;border:2px solid var(--border);background:var(--bg2);color:var(--t1);outline:none;font-family:inherit;box-sizing:border-box}
-.text-input:focus{border-color:var(--blue)}
+/* ═══════ TEXT INPUT ═══════ */
+.txt-input{
+  width:100%;padding:12px 16px;font-size:16px;font-weight:600;border-radius:10px;
+  border:2px solid var(--border-main);background:var(--bg-input);color:var(--text-primary);
+  outline:none;font-family:'Raleway',sans-serif;box-sizing:border-box;
+  transition:border-color .2s,box-shadow .2s;
+}
+.txt-input::placeholder{color:var(--text-muted)}
+.txt-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-glow)}
 
-/* ── PHOTO ── */
-.photo-row{display:flex;align-items:center;gap:8px;margin-top:8px}
-.photo-btn{padding:6px 11px;font-size:13px;font-weight:800;border-radius:7px;border:2px solid #92400e;background:#1c1208;color:var(--amber);cursor:pointer;font-family:inherit}
-.photo-thumb{width:34px;height:34px;border-radius:6px;object-fit:cover;border:2px solid #92400e}
+/* ═══════ PHOTO ═══════ */
+.photo-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.photo-btn{
+  padding:6px 12px;font-size:12px;font-weight:800;border-radius:7px;
+  border:1px solid #92400e55;background:#1a150a;color:var(--amber);
+  cursor:pointer;font-family:inherit;transition:all .15s;
+}
+.photo-btn:active{background:#261d0d}
+.photo-thumb{width:32px;height:32px;border-radius:6px;object-fit:cover;border:1px solid #92400e55}
 
-/* ── OBSERVACIONES ── */
-.obs-area{padding:20px 18px 140px}
-.obs-title{font-size:17px;font-weight:900;color:var(--t2);margin-bottom:10px}
-.obs-textarea{width:100%;padding:14px 16px;font-size:17px;font-weight:600;border-radius:12px;border:2px solid var(--border);background:var(--bg2);color:var(--t1);outline:none;resize:vertical;font-family:inherit;box-sizing:border-box;min-height:90px}
+/* ═══════ OBS ═══════ */
+.obs-wrap{padding:20px 20px 40px}
+.obs-label{font-size:14px;font-weight:800;color:var(--text-secondary);margin-bottom:8px;letter-spacing:0.5px}
+.obs-textarea{
+  width:100%;padding:14px 16px;font-size:15px;font-weight:500;border-radius:12px;
+  border:2px solid var(--border-main);background:var(--bg-input);color:var(--text-primary);
+  outline:none;resize:vertical;font-family:'Raleway',sans-serif;box-sizing:border-box;min-height:80px;
+  transition:border-color .2s;
+}
 .obs-textarea:focus{border-color:var(--blue)}
 
-/* ── FOOTER ── */
-.footer{flex-shrink:0;background:var(--bg2);border-top:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:10px;z-index:50}
-.prog-pct{font-size:14px;font-weight:800;color:var(--t4);min-width:42px}
-.prog-bar{flex:1;height:10px;border-radius:5px;background:var(--border);overflow:hidden}
-.prog-fill{height:100%;border-radius:5px;transition:width .4s;background:linear-gradient(90deg,var(--blue),var(--cyan))}
-.prog-fill.done{background:var(--green-d)}
-.prog-count{font-size:12px;font-weight:700;color:var(--t5)}
-.send-btn{padding:10px 22px;font-size:15px;font-weight:900;border-radius:10px;border:none;cursor:pointer;font-family:inherit;background:var(--border);color:var(--t4);transition:all .2s}
-.send-btn.ready{background:var(--green);color:var(--bg)}
-.send-btn.sending{opacity:.5;pointer-events:none}
+/* ═══════ FOOTER ═══════ */
+.footer-bar{
+  flex-shrink:0;background:linear-gradient(180deg,var(--bg-card),var(--bg-base));
+  padding:10px 16px;display:flex;align-items:center;gap:10px;z-index:50;
+  border-top:1px solid var(--border-subtle);
+}
+.footer-bar::before{content:'';position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent)22,transparent)}
+.f-pct{font-size:13px;font-weight:900;color:var(--text-tertiary);min-width:38px;font-family:'JetBrains Mono',monospace}
+.f-bar{flex:1;height:8px;border-radius:4px;background:var(--bg-elevated);overflow:hidden;border:1px solid var(--border-subtle)}
+.f-fill{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,var(--blue),#06b6d4)}
+.f-fill.done{background:linear-gradient(90deg,var(--accent-dark),var(--accent))}
+.f-count{font-size:11px;font-weight:700;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.f-send{
+  padding:10px 20px;font-size:13px;font-weight:900;border-radius:9px;border:none;
+  cursor:pointer;font-family:'Raleway',sans-serif;letter-spacing:1px;text-transform:uppercase;
+  background:var(--bg-elevated);color:var(--text-muted);transition:all .2s;
+}
+.f-send.ready{background:linear-gradient(135deg,var(--accent),#0ea860);color:#fff;box-shadow:0 2px 16px var(--accent-glow)}
+.f-send:active{transform:scale(0.96)}
+.f-send.sending{opacity:.5;pointer-events:none}
 
-/* ── SENT SCREEN ── */
-.sent-screen{display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;padding:24px;text-align:center}
-.sent-screen.show{display:flex}
-.sent-icon{font-size:72px}
-.sent-title{font-size:26px;font-weight:900}
-.sent-sub{font-size:17px;color:var(--green);font-weight:700}
-.sent-btn{margin-top:20px;padding:16px 40px;font-size:17px;font-weight:900;border-radius:12px;border:none;background:var(--green);color:var(--bg);cursor:pointer;font-family:inherit}
+/* ═══════ SENT OVERLAY ═══════ */
+.sent{display:none;position:fixed;inset:0;background:var(--bg-deep);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.sent.show{display:flex}
+.sent-check{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#0ea860);display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 4px 30px var(--accent-glow);margin-bottom:24px}
+.sent h2{font-size:24px;font-weight:900;margin-bottom:8px;letter-spacing:0.5px}
+.sent p{font-size:16px;color:var(--accent);font-weight:700;margin-bottom:24px}
+.sent-new{padding:16px 40px;font-size:15px;font-weight:900;border-radius:12px;border:2px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-family:inherit;letter-spacing:1px;transition:all .2s}
+.sent-new:hover{background:var(--accent);color:#fff}
 
-/* ── STATUS TOAST ── */
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:12px;font-size:15px;font-weight:800;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+/* ═══════ TOAST ═══════ */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:10px;font-size:13px;font-weight:800;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;font-family:'Raleway',sans-serif}
 .toast.show{opacity:1}
-.toast.ok{background:#16a34a;color:#fff}
-.toast.err{background:#dc2626;color:#fff}
+.toast.ok{background:var(--accent-dark);color:#fff;box-shadow:0 4px 20px var(--accent-glow)}
+.toast.err{background:#991b1b;color:#fff;box-shadow:0 4px 20px var(--red-glow)}
 </style>
 </head>
 <body>
 
 <div id="app">
-  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="logo">
-      <div class="logo-dot"></div>
-      <span class="logo-text">Saicapaper</span>
-      <span class="logo-sub">Ronda Planta</span>
+    <div class="brand">
+      <div class="brand-icon">SP</div>
+      <div class="brand-text">
+        <span class="brand-name">Saicapaper</span>
+        <span class="brand-sub">Ronda de Planta</span>
+      </div>
     </div>
-    <div class="turno-box" id="turnoBox"></div>
+    <div class="top-right">
+      <div class="date-badge" id="dateBadge"></div>
+      <div class="turno-group" id="turnoGroup"></div>
+    </div>
   </div>
 
-  <!-- ZONE TABS -->
-  <div class="zone-bar" id="zoneBar"></div>
-
-  <!-- BODY -->
-  <div class="body" id="bodyEl"></div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="prog-pct" id="progPct">0%</div>
-    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
-    <div class="prog-count" id="progCount">0/0</div>
-    <button class="send-btn" id="sendBtn" onclick="handleSend()">📤 ENVIAR</button>
+  <div class="main-content">
+    <div class="zone-nav" id="zoneNav"></div>
+    <div class="sec-nav" id="secNav"></div>
+    <div class="body" id="bodyEl"></div>
   </div>
 
-  <!-- SENT SCREEN -->
-  <div class="sent-screen" id="sentScreen">
-    <div class="sent-icon">✅</div>
-    <div class="sent-title">Ronda enviada correctamente</div>
-    <div class="sent-sub" id="sentSub"></div>
-    <button class="sent-btn" onclick="resetApp()">Nueva ronda</button>
+  <div class="footer-bar">
+    <div class="f-pct" id="fPct">0%</div>
+    <div class="f-bar"><div class="f-fill" id="fFill"></div></div>
+    <div class="f-count" id="fCount">0/0</div>
+    <button class="f-send" id="fSend" onclick="doSend()">ENVIAR</button>
+  </div>
+
+  <div class="sent" id="sentOverlay">
+    <div class="sent-check">✓</div>
+    <h2>Ronda enviada</h2>
+    <p id="sentInfo"></p>
+    <button class="sent-new" onclick="doReset()">NUEVA RONDA</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════
-   ██  CONFIGURACIÓN SUPABASE — RELLENAR CON TUS DATOS  ██
-   ═══════════════════════════════════════════════════════════════ */
-const SUPABASE_URL = "";   // ← Ej: "https://abcdef123.supabase.co"
-const SUPABASE_KEY = "";   // ← Ej: "eyJhbGciOiJI..."  (clave anon/public)
-const SUPABASE_TABLE = "rondas";
-/* ═══════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════
+   SUPABASE CONFIG — Fill with your project data
+   ══════════════════════════════════════════════════════ */
+const SUPABASE_URL = "";
+const SUPABASE_KEY = "";
+const TABLE = "rondas";
+/* ══════════════════════════════════════════════════════ */
 
-// ─── ZONE DATA ──────────────────────────────────────
 const ZONES=[
-{id:"mb",name:"MB / Desulf. / Lodos",short:"MB",color:"#10b981",sections:[
+{id:"mb",name:"MB / Desulf. / Lodos",short:"MB",color:"#22d37e",sections:[
 {id:"thiopaqs",name:"Thiopaqs",items:[
 {id:"thiopaq_serv",label:"Thiopaq en servicio",type:"sel",options:["2.1","3","2.2"]},
 {id:"p_imp_sopl",label:"P impulsión soplante (bar)",type:"num",limit:"<0,7"},
@@ -171,19 +312,17 @@ const ZONES=[
 {id:"flujos_anal",label:"Flujost. analizadores (leds)",type:"num",limit:">6"},
 {id:"potes_cond",label:"Potes condensado ANATRAC",type:"ok"},
 {id:"thiopaq_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"sopl_desulf",name:"Soplantes Desulfuración",items:[
+{id:"sopl_desulf",name:"Sopl. Desulfuración",items:[
 {id:"sopl_d_serv",label:"Soplante en servicio",type:"sel",options:["B-490.1","B-490.2","B-490.3"]},
 {id:"sopl_d_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"sopl_biogas",name:"Soplantes Biogás",items:[
-{id:"43b413",label:"43-B-413 (estado)",type:"ok"},
-{id:"343b413",label:"343-B-413 (estado)",type:"ok"},
-{id:"443b413_1",label:"443-B-413.1 (estado)",type:"ok"},
-{id:"443b413_2",label:"443-B-413.2 (estado)",type:"ok"},
+{id:"sopl_biogas",name:"Sopl. Biogás",items:[
+{id:"43b413",label:"43-B-413 (estado)",type:"ok"},{id:"343b413",label:"343-B-413 (estado)",type:"ok"},
+{id:"443b413_1",label:"443-B-413.1 (estado)",type:"ok"},{id:"443b413_2",label:"443-B-413.2 (estado)",type:"ok"},
 {id:"sopl_b_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"foso_azufre",name:"Foso y Balsas de azufre",items:[
+{id:"foso_azufre",name:"Foso Azufre",items:[
 {id:"nivel_balsas",label:"Nivel balsas",type:"num",limit:"<30%"},
 {id:"foso_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"pl_lodos",name:"Planta de lodos",items:[
+{id:"pl_lodos",name:"Planta Lodos",items:[
 {id:"p_aire_345",label:"P aire 345-C-418 (bar)",type:"num",limit:"6,1/6,5"},
 {id:"p_aceite_340d",label:"P aceite 340-D-305 (bar)",type:"num",limit:"<300"},
 {id:"giro_rasc",label:"Giro rascador 340-C-381",type:"ok"},
@@ -193,20 +332,19 @@ const ZONES=[
 {id:"niv_fango",label:"Nivel fango 340-C-381",type:"sel",options:["1","2","3"]},
 {id:"lodos_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
 ]},
-{id:"ptas",name:"PTAs",short:"PTAs",color:"#0ea5e9",sections:[
-{id:"s2",name:"Pretratamiento S2",items:[
+{id:"ptas",name:"PTAs",short:"PTAs",color:"#38bdf8",sections:[
+{id:"s2",name:"Pretrat. S2",items:[
 {id:"s2_balsa",label:"Balsa (estado)",type:"ok"},{id:"s2_dec",label:"Decantador (estado)",type:"ok"},
 {id:"s2_filt",label:"Filtros de arena (estado)",type:"ok"},
 {id:"s2_fecl3",label:"Bombas FeCl₃ 40-P-435",type:"sel",options:["1","2"]},
 {id:"s2_nacl",label:"Bombas NaCl 40-P-436",type:"sel",options:["1","2"]},
 {id:"s2_dos",label:"Dosificación NaCl corona dec.",type:"ok"},
 {id:"s2_fangos",label:"Bomba Fangos 40-P-431",type:"sel",options:["1","2"]},
-{id:"s2_agit",label:"Agitador (estado)",type:"ok"},
-{id:"s2_bern",label:"Filtro Bernouilli F-407.2",type:"ok"},
+{id:"s2_agit",label:"Agitador (estado)",type:"ok"},{id:"s2_bern",label:"Filtro Bernouilli F-407.2",type:"ok"},
 {id:"s2_turb",label:"Turbidez sal. dec. (NTU)",type:"num",limit:"<4"},
 {id:"s2_cloro",label:"Cloro 40-QT-003.2 (ppm)",type:"num",limit:"0,2/1,5"},
 {id:"s2_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"s3",name:"Pretratamiento S3",items:[
+{id:"s3",name:"Pretrat. S3",items:[
 {id:"s3_dec",label:"Decantador (estado)",type:"ok"},{id:"s3_filt",label:"Filtros de arena (estado)",type:"ok"},
 {id:"s3_fecl3",label:"Bomba FeCl₃ 340-P-435",type:"sel",options:["1","2"]},
 {id:"s3_nacl",label:"Bomba NaCl 340-P-436",type:"sel",options:["1","2"]},
@@ -219,7 +357,7 @@ const ZONES=[
 {id:"s3_cl003",label:"Cloro 340-QT-003 (ppm)",type:"num",limit:"0,2/1,5"},
 {id:"s3_cl003b",label:"Cloro 340-QT-003.2 (ppm)",type:"num",limit:"0,2/1,5"},
 {id:"s3_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"s4",name:"Pretratamiento S4",items:[
+{id:"s4",name:"Pretrat. S4",items:[
 {id:"s4_balsa",label:"Balsa (estado)",type:"ok"},{id:"s4_dec",label:"Decantador (estado)",type:"ok"},
 {id:"s4_filt",label:"Filtros de arena (estado)",type:"ok"},
 {id:"s4_fecl3",label:"Bomba FeCl₃ 440-P-435",type:"sel",options:["1","2"]},
@@ -228,29 +366,26 @@ const ZONES=[
 {id:"s4_nacl2",label:"Bomba NaCl 440-P-436 (2ª)",type:"sel",options:["6","7"]},
 {id:"s4_dosfilt",label:"Dosificación salida filtros arena",type:"ok"},
 {id:"s4_fangos",label:"Bomba Fangos 440-P-431",type:"sel",options:["1","2"]},
-{id:"s4_agit76",label:"Agitador (velocidad 76)",type:"ok"},
-{id:"s4_bern",label:"Filtro Bernouilli F-407.2",type:"ok"},
+{id:"s4_agit76",label:"Agitador (velocidad 76)",type:"ok"},{id:"s4_bern",label:"Filtro Bernouilli F-407.2",type:"ok"},
 {id:"s4_turb",label:"Turbidez sal. dec. (NTU)",type:"num",limit:"<4"},
 {id:"s4_cl003",label:"Cloro 440-QT-003 (ppm)",type:"num",limit:"0,2/1,5"},
 {id:"s4_cl003b",label:"Cloro 440-QT-003.2 (ppm)",type:"num",limit:"0,2/1,5"},
 {id:"s4_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"pve",name:"Pretratamiento PVE",items:[
+{id:"pve",name:"Pretrat. PVE",items:[
 {id:"pve_dec",label:"Decantador (estado)",type:"ok"},
 {id:"pve_fecl3",label:"Bomba FeCl₃ (80%) 440-P-435",type:"sel",options:["3","4"]},
 {id:"pve_nacl",label:"Bomba NaCl (60%) 440-P-436",type:"sel",options:["3","4","5"]},
-{id:"pve_agit40",label:"Agitador (velocidad 40)",type:"ok"},
-{id:"pve_rasc",label:"Rascador de fondo",type:"ok"},
+{id:"pve_agit40",label:"Agitador (velocidad 40)",type:"ok"},{id:"pve_rasc",label:"Rascador de fondo",type:"ok"},
 {id:"pve_doscl",label:"Dosificación cloro corona dec.",type:"ok"},
 {id:"pve_niv",label:"Nivel manto decantador",type:"num",limit:"14/24"},
 {id:"pve_turbs",label:"Turbidez sal. dec. (NTU)",type:"num",limit:"<4"},
 {id:"pve_turbe",label:"Turbidez ent. dec. (NTU)",type:"num",limit:"<10"},
 {id:"pve_pref",label:"P refrig coj. agitador (bar)",type:"num",limit:">0,2"},
 {id:"pve_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"foso",name:"Foso bombas",items:[
-{id:"foso_vaso",label:"Vaso Addams vacío",type:"yn"},
-{id:"foso_bomba",label:"Bomba achique funciona",type:"yn"}]}
+{id:"foso",name:"Foso Bombas",items:[
+{id:"foso_vaso",label:"Vaso Addams vacío",type:"yn"},{id:"foso_bomba",label:"Bomba achique funciona",type:"yn"}]}
 ]},
-{id:"cs2",name:"Cogen. S2",short:"Cog S2",color:"#f59e0b",sections:[
+{id:"cs2",name:"Cogeneración S2",short:"Cog S2",color:"#fbbf24",sections:[
 {id:"cf_tg2",name:"Casa Filtros TG2",items:[
 {id:"tg2_dpev",label:"ΔP esfera evaporat. (mmca)",type:"num",limit:"<10"},
 {id:"tg2_dpfi",label:"ΔP esfera filtros (InH₂O)",type:"num",limit:"<3"},
@@ -259,7 +394,7 @@ const ZONES=[
 {id:"tg2_p47",label:"P 47-C-460 ¿recupera? (bar)",type:"num",limit:">6"},
 {id:"tg2_qev",label:"Q evaporativo (47-FI-001 a 006)",type:"ok"},
 {id:"tg2_cffrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"tg_tg2",name:"Turbina de Gas TG2",items:[
+{id:"tg_tg2",name:"Turbina Gas TG2",items:[
 {id:"tg2_dpvah",label:"ΔP filtro ext. vahos (kPa)",type:"num",limit:"<10"},
 {id:"tg2_pvah",label:"P ent. ext. vahos (mbar)",type:"num",limit:"-40/-60"},
 {id:"tg2_carter",label:"Nivel real cárter aceite (3/4)",type:"ok"},
@@ -270,52 +405,43 @@ const ZONES=[
 {id:"tg2_dpfc",label:"ΔP filtro control (bar)",type:"num",limit:"0"},
 {id:"tg2_haz",label:"HAZGAS — Detectores (1,2,3)",type:"ok"},
 {id:"tg2_flujo",label:"Medidores flujo (>5)",type:"ok"},
-{id:"tg2_nott4",label:"NOTIFIER trafo T4",type:"ok"},
-{id:"tg2_nottg",label:"NOTIFIER TG2",type:"ok"},
+{id:"tg2_nott4",label:"NOTIFIER trafo T4",type:"ok"},{id:"tg2_nottg",label:"NOTIFIER TG2",type:"ok"},
 {id:"tg2_comp",label:"Comp. AUX/Vahos/TG/RED/ALT — FRV",type:"ok"}]},
-{id:"a502",name:"Armario A502 TG2",items:[
+{id:"a502",name:"Armario A502",items:[
 {id:"a502_al",label:"Alarmas",type:"text"},{id:"a502_led",label:"Indicadores (leds)",type:"text"},
 {id:"a502_test",label:"Tª estator 1‑6 (Cº) MAX",type:"num",limit:"<140"},
 {id:"a502_tcal",label:"Tª aire caliente gen. (Cº)",type:"num",limit:"<90"},
 {id:"a502_tfri",label:"Tª aire frío gen. (Cº)",type:"num",limit:"<60"}]},
-{id:"tv3",name:"Turbina de Vapor TV3",items:[
+{id:"tv3",name:"Turbina Vapor TV3",items:[
 {id:"tv3_dplub",label:"ΔP filtro aceite lubricación",type:"br"},
 {id:"tv3_carter",label:"Nivel cárter aceite (visor >1/2)",type:"ok"},
 {id:"tv3_pvap",label:"P vapor de sellos (mbar)",type:"num",limit:"< -40"},
-{id:"tv3_n48h",label:"Nivel 48-H-425 (condensado)",type:"num",limit:"3/4"},
-{id:"tv3_agref",label:"Agua refrig. 48-B-450.2",type:"ok"},
 {id:"tv3_pimp",label:"P imp 48-P-450.5 (bar)",type:"num",limit:"0,7/1,2"},
 {id:"tv3_intac",label:"Intercambiador aceite",type:"sel",options:["H-450.1","H-450.2"]},
 {id:"tv3_tas",label:"Tª agua sal. 48-H-450 (ºC)",type:"num",limit:"<55"},
 {id:"tv3_tcs",label:"Tª aceite sal. 48-H-450 (ºC)",type:"num",limit:"<30"},
 {id:"tv3_potes",label:"Potes vaho aceite 48-B-450.1",type:"ok"},
-{id:"tv3_esv",label:"Pote vaho aceite ESV",type:"ok"},
 {id:"tv3_intal",label:"Intercambiador alternador",type:"sel",options:["H-450.3","H-450.4"]},
 {id:"tv3_plub",label:"P aceite lubricación (bar)",type:"num",limit:"1,5/2"},
 {id:"tv3_dpctrl",label:"ΔP filtro aceite control",type:"br"},
-{id:"tv3_tcomp",label:"Tª int. compartimento (ºC)",type:"num"},
 {id:"tv3_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
 {id:"arm_tv3",name:"Armarios TV3",items:[
 {id:"atv3_vib",label:"Armario vibrac. SCD-40",type:"text"},
-{id:"atv3_prot",label:"Armario protecc. SCD-40",type:"ok"},
 {id:"atv3_sinc",label:"Armario sinc. y alar. SC S2",type:"ok"},
 {id:"atv3_cos",label:"COS φ TV3 SC S2",type:"text"},
 {id:"atv3_not",label:"NOTIFIER TV3 SC S2",type:"ok"}]},
 {id:"c10",name:"Caldera C10",items:[
-{id:"c10_411",label:"Nivel real 41-C-411 (alim)",type:"ok"},
-{id:"c10_409",label:"Nivel real 41-C-409 (cond)",type:"ok"},
+{id:"c10_411",label:"Nivel real 41-C-411 (alim)",type:"ok"},{id:"c10_409",label:"Nivel real 41-C-409 (cond)",type:"ok"},
 {id:"c10_455",label:"Nivel real 46-C-455 (CRC)",type:"ok"},
-{id:"c10_441",label:"Nivel real 41-C-441 AP (x2)",type:"ok"},
-{id:"c10_442",label:"Nivel real 41-C-442 BP (x2)",type:"ok"},
+{id:"c10_441",label:"Nivel real 41-C-441 AP (x2)",type:"ok"},{id:"c10_442",label:"Nivel real 41-C-442 BP (x2)",type:"ok"},
 {id:"c10_byp",label:"Bypass apagallamas BG C10",type:"ok"},
-{id:"c10_pf",label:"Purga filtro 46-VM-6930",type:"ok"},
-{id:"c10_pg37",label:"Purgador BG 46-VM-6937",type:"ok"},
+{id:"c10_pf",label:"Purga filtro 46-VM-6930",type:"ok"},{id:"c10_pg37",label:"Purgador BG 46-VM-6937",type:"ok"},
 {id:"c10_gn",label:"Purgas GN piloto P1 C10 (x4)",type:"ok"},
 {id:"c10_sell",label:"P. sellado 46-PI-410 (bar)",type:"num"},
 {id:"c10_404",label:"Purgador BG (45-Z-404/5)",type:"ok"},
 {id:"c10_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
 ]},
-{id:"cs3",name:"Cogen. S3",short:"Cog S3",color:"#f97316",sections:[
+{id:"cs3",name:"Cogeneración S3",short:"Cog S3",color:"#fb923c",sections:[
 {id:"cf_tg3",name:"Casa Filtros TG3",items:[
 {id:"tg3_dpev",label:"ΔP esfera evaporat. (mmca)",type:"num",limit:"<10"},
 {id:"tg3_dpfi",label:"ΔP esfera filtros (mmca)",type:"num",limit:"<75"},
@@ -324,7 +450,7 @@ const ZONES=[
 {id:"tg3_p347",label:"P 347-C-460 ¿recupera? (bar)",type:"num",limit:">6"},
 {id:"tg3_qev",label:"Q evaporativo (347-FI)",type:"ok"},
 {id:"tg3_cffrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"tg_tg3",name:"Turbina de Gas TG3",items:[
+{id:"tg_tg3",name:"Turbina Gas TG3",items:[
 {id:"tg3_dpvah",label:"ΔP filtro ext. vahos (bar)",type:"num",limit:"12"},
 {id:"tg3_pvah",label:"P ent. ext. vahos (mbar)",type:"num",limit:"-30/-50"},
 {id:"tg3_plub",label:"P aceite lubricación (bar)",type:"num",limit:"3,2"},
@@ -333,13 +459,9 @@ const ZONES=[
 {id:"tg3_dpfh",label:"ΔP filtro hid. (PSID)",type:"num",limit:"0"},
 {id:"tg3_haz",label:"HAZGAS — Detectores (1,2,3)",type:"ok"},
 {id:"tg3_flujo",label:"Medidores flujo (>5)",type:"ok"},
-{id:"tg3_not3t",label:"NOTIFIER trafo 3T4",type:"ok"},
-{id:"tg3_nottg",label:"NOTIFIER TG3",type:"ok"},
+{id:"tg3_not3t",label:"NOTIFIER trafo 3T4",type:"ok"},{id:"tg3_nottg",label:"NOTIFIER TG3",type:"ok"},
 {id:"tg3_comp",label:"Comp. AUX/Vahos/TG/RED/ALT — FRV",type:"ok"}]},
-{id:"arm_tg3",name:"Armarios TG3",items:[
-{id:"arm3_al",label:"02TEX001AR — Alarmas/Indicad.",type:"ok"},
-{id:"arm3_san",label:"SANCO — Alarmas/Indicad.",type:"ok"}]},
-{id:"tv5",name:"Turbina de Vapor TV5",items:[
+{id:"tv5",name:"Turbina Vapor TV5",items:[
 {id:"tv5_pvap",label:"P vapor de sellos (bar)",type:"num",limit:"< -0,2"},
 {id:"tv5_ncond",label:"Nivel cond. vapor sellos",type:"num",limit:"40/70"},
 {id:"tv5_pimp",label:"P imp 348-P-450 (bar)",type:"ok"},
@@ -353,12 +475,10 @@ const ZONES=[
 {id:"tv5_pbom",label:"P aceite bomba ppal. (bar)",type:"num",limit:"8,5/9"},
 {id:"tv5_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
 {id:"arm_tv5",name:"Armarios TV5",items:[
-{id:"atv5_cba",label:"Armario CBA 10 SCD-340",type:"ok"},
-{id:"atv5_cbb",label:"Armario CBB 10 SCD-340",type:"ok"},
+{id:"atv5_cba",label:"Armario CBA 10 SCD-340",type:"ok"},{id:"atv5_cbb",label:"Armario CBB 10 SCD-340",type:"ok"},
 {id:"atv5_cha",label:"Armario CHA 10 SCD-340",type:"ok"},
-{id:"atv5_cos",label:"COS φ TV5 SCD-340",type:"text"},
-{id:"atv5_not",label:"NOTIFIER TV5 SC S3",type:"ok"}]},
-{id:"neb",name:"Agua Nebulizada TV",items:[
+{id:"atv5_cos",label:"COS φ TV5 SCD-340",type:"text"},{id:"atv5_not",label:"NOTIFIER TV5 SC S3",type:"ok"}]},
+{id:"neb",name:"Agua Nebulizada",items:[
 {id:"neb_pb",label:"P. manóm. bombeo (bar)",type:"num",limit:">25"},
 {id:"neb_n2",label:"P. botellas N₂ (x18) (bar)",type:"num",limit:">200"},
 {id:"neb_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
@@ -366,13 +486,12 @@ const ZONES=[
 {id:"c14_411",label:"Nivel real 341-C-411",type:"ok"},{id:"c14_409",label:"Nivel real 341-c-409",type:"ok"},
 {id:"c14_455",label:"Nivel real 346-C-455",type:"ok"},{id:"c14_441",label:"Nivel real 341-C-441",type:"ok"},
 {id:"c14_442",label:"Nivel real 341-C-442",type:"ok"},
-{id:"c14_pf",label:"Purga filtro 346-VM-6746",type:"ok"},
-{id:"c14_pg44",label:"Purgador BG 346-VM-6744",type:"ok"},
+{id:"c14_pf",label:"Purga filtro 346-VM-6746",type:"ok"},{id:"c14_pg44",label:"Purgador BG 346-VM-6744",type:"ok"},
 {id:"c14_sell",label:"P. sellado refr. C14 (mmH₂O)",type:"num"},
 {id:"c14_3576",label:"Purga BG 343-VM-3576",type:"ok"},
 {id:"c14_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
 ]},
-{id:"cs4",name:"Cogen. S4",short:"Cog S4",color:"#ef4444",sections:[
+{id:"cs4",name:"Cogeneración S4",short:"Cog S4",color:"#f87171",sections:[
 {id:"cf_tg4",name:"Casa Filtros TG4",items:[
 {id:"tg4_dpev",label:"ΔP esfera evaporat. (mmca)",type:"num",limit:"<10"},
 {id:"tg4_dpfi",label:"ΔP esfera filtros (mmca)",type:"num",limit:"<75"},
@@ -381,7 +500,7 @@ const ZONES=[
 {id:"tg4_p447",label:"P 447-C-460 ¿recupera? (bar)",type:"num",limit:">6"},
 {id:"tg4_qev",label:"Q evaporativo (447-FI)",type:"ok"},
 {id:"tg4_cffrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"tg_tg4",name:"Turbina de Gas TG4",items:[
+{id:"tg_tg4",name:"Turbina Gas TG4",items:[
 {id:"tg4_dpvah",label:"ΔP filtro ext. vahos (kPa)",type:"num",limit:"<10"},
 {id:"tg4_pvah",label:"P ent. ext. vahos (mbar)",type:"num",limit:"-30/-50"},
 {id:"tg4_carter",label:"Nivel real cárter aceite (3/4)",type:"ok"},
@@ -389,13 +508,9 @@ const ZONES=[
 {id:"tg4_pctrl",label:"P aceite control (bar)",type:"num",limit:"≈92"},
 {id:"tg4_dpfl",label:"ΔP filtro lubricación (bar)",type:"num",limit:"0"},
 {id:"tg4_dpfc",label:"ΔP filtro control (bar)",type:"num",limit:"0"},
-{id:"tg4_nott4",label:"NOTIFIER trafo 4T4",type:"ok"},
-{id:"tg4_nottg",label:"NOTIFIER TG4",type:"ok"},
+{id:"tg4_nott4",label:"NOTIFIER trafo 4T4",type:"ok"},{id:"tg4_nottg",label:"NOTIFIER TG4",type:"ok"},
 {id:"tg4_comp",label:"Comp. AUX/Vahos/TG/RED/ALT — FRV",type:"ok"}]},
-{id:"arm_tg4",name:"Armarios TG4",items:[
-{id:"arm4_al",label:"TEX001AR — Alarmas/Indicad.",type:"ok"},
-{id:"arm4_san",label:"SANCO — Alarmas/Indicad.",type:"ok"}]},
-{id:"tv6",name:"Turbina de Vapor TV6",items:[
+{id:"tv6",name:"Turbina Vapor TV6",items:[
 {id:"tv6_pvap",label:"P vapor de sellos (bar)",type:"num",limit:"<0,2"},
 {id:"tv6_intac",label:"Intercambiador aceite",type:"sel",options:["H-426.1","H-426.2"]},
 {id:"tv6_tas",label:"Tª agua sal. (ºC)",type:"num",limit:"<55"},
@@ -405,66 +520,59 @@ const ZONES=[
 {id:"tv6_dpfc",label:"ΔP filtro cont. (bar)",type:"num",limit:"<0,5"},
 {id:"tv6_plub",label:"P aceite lubricación (bar)",type:"num",limit:"1,5/2"},
 {id:"tv6_pbom",label:"P aceite bomba ppal. (bar)",type:"num",limit:"8,5/9"},
-{id:"tv6_tcomp",label:"Tª int. compartimento (ºC)",type:"num"},
 {id:"tv6_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
 {id:"arm_tv6",name:"Armarios TV6",items:[
-{id:"atv6_plc",label:"Armario PLC TV6 SCD-440",type:"ok"},
-{id:"atv6_cbg",label:"Armario +CBG10 SCD-440",type:"ok"},
-{id:"atv6_cos",label:"COS φ TV6 SCD-340",type:"text"},
-{id:"atv6_not",label:"NOTIFIER TV6 SC S4",type:"ok"}]},
+{id:"atv6_plc",label:"Armario PLC TV6 SCD-440",type:"ok"},{id:"atv6_cbg",label:"Armario +CBG10 SCD-440",type:"ok"},
+{id:"atv6_cos",label:"COS φ TV6 SCD-340",type:"text"},{id:"atv6_not",label:"NOTIFIER TV6 SC S4",type:"ok"}]},
 {id:"c16",name:"Caldera C16",items:[
 {id:"c16_411",label:"Nivel real 441-C-411",type:"ok"},{id:"c16_409",label:"Nivel real 441-c-409",type:"ok"},
 {id:"c16_455",label:"Nivel real 446-C-455",type:"ok"},{id:"c16_441",label:"Nivel real 441-C-441",type:"ok"},
 {id:"c16_442",label:"Nivel real 441-C-442",type:"ok"},
-{id:"c16_pf",label:"Purga filtro 446-VM-6747",type:"ok"},
-{id:"c16_pg45",label:"Purgador BG 446-VM-6745",type:"ok"},
-{id:"c16_3607",label:"Purgador BG 446-VM-3607",type:"ok"},
-{id:"c16_3608",label:"Purgador BG 446-VM-3608",type:"ok"},
+{id:"c16_pf",label:"Purga filtro 446-VM-6747",type:"ok"},{id:"c16_pg45",label:"Purgador BG 446-VM-6745",type:"ok"},
+{id:"c16_3607",label:"Purgador BG 446-VM-3607",type:"ok"},{id:"c16_3608",label:"Purgador BG 446-VM-3608",type:"ok"},
 {id:"c16_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
 ]},
-{id:"ax2",name:"Auxiliares S2",short:"Aux S2",color:"#8b5cf6",sections:[
-{id:"comp_s2",name:"Compresores Aire",items:[
+{id:"ax2",name:"Auxiliares S2",short:"Aux S2",color:"#a78bfa",sections:[
+{id:"comp_s2",name:"Compresores",items:[
 {id:"ax2_csv",label:"Compresor en servicio",type:"sel",options:["B-401","B-402","B-420"]},
 {id:"ax2_t2e",label:"Tª aire 2ªetapa (ºC)",type:"num",limit:"<46"},
 {id:"ax2_vib",label:"Vibración etapas (mil)",type:"num",limit:"<25"},
 {id:"ax2_plub",label:"P aceite lubricación (bar)",type:"num",limit:">1,4"},
 {id:"ax2_tlub",label:"Tª aceite lubricación (ºC)",type:"num",limit:"30/45"},
 {id:"ax2_cfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"sec_s2",name:"Secadores Aire",items:[
+{id:"sec_s2",name:"Secadores",items:[
 {id:"ax2_torre",label:"Torre en servicio",type:"sel",options:["Z-404","Z-405"]},
 {id:"ax2_rocio",label:"Tª p. rocío (ºC)",type:"num",limit:"< -5"},
 {id:"ax2_pref",label:"Prefiltros",type:"sel",options:["F-401","F-402"]},
 {id:"ax2_dppf",label:"ΔP prefiltro y postfiltro",type:"ok"},
 {id:"ax2_sfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"bomb_s2",name:"Bombas Alimentación",items:[
+{id:"bomb_s2",name:"Bombas Alim.",items:[
 {id:"ax2_bsv",label:"Bomba en servicio",type:"sel",options:["P-411.1","P-411.2","P-411.3"]},
 {id:"ax2_tcoj",label:"Tª cojinete (ºC)",type:"num",limit:"<90"},
 {id:"ax2_piap",label:"P impulsión A.P. (bar)",type:"num",limit:"≈90"},
 {id:"ax2_pibp",label:"P impulsión B.P (bar)",type:"num",limit:"≈38"},
 {id:"ax2_peq",label:"P equilibrio (bar)",type:"num",limit:"≈1,8"},
 {id:"ax2_bfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"car_s2",name:"CAR y CCR",items:[
+{id:"car_s2",name:"CAR / CCR",items:[
 {id:"ax2_carb",label:"CAR Bomba",type:"sel",options:["P-440.1","P-440.2"]},
 {id:"ax2_ccrb",label:"CCR Bomba",type:"sel",options:["P-462.1","P-462.2"]},
 {id:"ax2_inter",label:"Intercambiador",type:"sel",options:["H-420.1","H-420.2"]},
 {id:"ax2_td",label:"Tª después H-420 (ºC)",type:"num",limit:"11/35"},
 {id:"ax2_carfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"cida_s2",name:"CIDA (Desmin.)",items:[
+{id:"cida_s2",name:"CIDA",items:[
 {id:"ax2_cadena",label:"Cadena en servicio",type:"sel",options:["Línea 1","Línea 2"]},
 {id:"ax2_caudal",label:"Caudal línea (m³/h)",type:"num"},
-{id:"ax2_cond",label:"Conductividad",type:"num"},
-{id:"ax2_ph",label:"pH",type:"num"},
+{id:"ax2_cond",label:"Conductividad",type:"num"},{id:"ax2_ph",label:"pH",type:"num"},
 {id:"ax2_cifrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
 ]},
-{id:"ax3",name:"Auxiliares S3",short:"Aux S3",color:"#a855f7",sections:[
-{id:"comp_s3",name:"Compresores Aire",items:[
+{id:"ax3",name:"Auxiliares S3",short:"Aux S3",color:"#c084fc",sections:[
+{id:"comp_s3",name:"Compresores",items:[
 {id:"ax3_csv",label:"Compresor en servicio",type:"sel",options:["B-401","B-402"]},
 {id:"ax3_t2e",label:"Tª aire etapas (ºC)",type:"num",limit:"<46"},
 {id:"ax3_vib",label:"Vibración etapas (mil)",type:"num",limit:"<25"},
 {id:"ax3_plub",label:"P aceite lubricación (bar)",type:"num",limit:">1,4"},
-{id:"ax3_tlub",label:"Tª aceite lubricación (ºC)",type:"num",limit:"30/45"},
 {id:"ax3_cfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"bomb_s3",name:"Bombas Alimentación",items:[
+{id:"bomb_s3",name:"Bombas Alim.",items:[
 {id:"ax3_bap",label:"Bomba AP",type:"sel",options:["P-411.1","P-411.2"]},
 {id:"ax3_bbp",label:"Bomba BP",type:"sel",options:["P-411.4","P-411.5","P-411.6"]},
 {id:"ax3_pdif",label:"P diferencial filtro (bar)",type:"num",limit:"<0,35"},
@@ -483,8 +591,8 @@ const ZONES=[
 {id:"ax3_pred",label:"Presión red salida (bar)",type:"num",limit:">3"},
 {id:"ax3_pfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
 ]},
-{id:"ax4",name:"Auxiliares S4",short:"Aux S4",color:"#ec4899",sections:[
-{id:"comp_s4",name:"Compresores Aire",items:[
+{id:"ax4",name:"Auxiliares S4",short:"Aux S4",color:"#f472b6",sections:[
+{id:"comp_s4",name:"Compresores",items:[
 {id:"ax4_csv",label:"Compresor en servicio",type:"sel",options:["B-401","B-402","B-420"]},
 {id:"ax4_t2e",label:"Tª aire etapas (ºC)",type:"num",limit:"<46"},
 {id:"ax4_vib",label:"Vibración etapas (mil)",type:"num",limit:"<25"},
@@ -505,214 +613,133 @@ const ZONES=[
 {id:"ax4_sal2",label:"Cond. SAL. Paso2 (µS)",type:"num",limit:"<30"},
 {id:"ax4_ofrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
 ]},
-{id:"erm",name:"ERMs / C.Aux",short:"ERM",color:"#64748b",sections:[
+{id:"erm",name:"ERMs / C.Aux",short:"ERM",color:"#94a3b8",sections:[
 {id:"erms",name:"ERM",items:[
 {id:"erm_mon",label:"Testigo válvula monitor (100%)",type:"text",note:"S2, S3, S4"},
 {id:"erm_prin",label:"Testigo válvula principal (regulando)",type:"text",note:"S2, S3, S4"},
 {id:"erm_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
-{id:"caux",name:"Calderas Auxiliares",items:[
+{id:"caux",name:"Calderas Aux.",items:[
 {id:"caux_p",label:"Presión indicador campo",type:"text",note:"C-11, C-12, C-15"},
 {id:"caux_niv",label:"Niveles reales",type:"text",note:"C-11, C-12, C-15"},
 {id:"caux_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
 ]}
 ];
 
-// ─── STATE ──────────────────────────────────────────
-let currentZone = ZONES[0].id;
-let currentTurno = "Mañana";
-let vals = {};
-let pics = {};
-let obs = "";
+// ── STATE ──
+let curZone=ZONES[0].id, curSec=ZONES[0].sections[0].id, curTurno="Mañana";
+let V={}, P={}, obs="";
 
-// ─── HELPERS ────────────────────────────────────────
-const isFilled = v => v!=null && v!=="" && !(Array.isArray(v)&&!v.length);
-const allItems = () => ZONES.flatMap(z=>z.sections.flatMap(s=>s.items));
-const totalCount = () => allItems().length;
-const filledCount = () => allItems().filter(it=>isFilled(vals[it.id])).length;
-const globalPct = () => { const t=totalCount(); return t?Math.round(filledCount()/t*100):0; };
-const zonePct = z => { const items=z.sections.flatMap(s=>s.items); const f=items.filter(it=>isFilled(vals[it.id])).length; return items.length?Math.round(f/items.length*100):0; };
-const secPct = s => { const f=s.items.filter(it=>isFilled(vals[it.id])).length; return s.items.length?Math.round(f/s.items.length*100):0; };
+const isFilled=v=>v!=null&&v!==""&&!(Array.isArray(v)&&!v.length);
+const allItems=()=>ZONES.flatMap(z=>z.sections.flatMap(s=>s.items));
+const total=()=>allItems().length;
+const filled=()=>allItems().filter(i=>isFilled(V[i.id])).length;
+const pct=()=>{const t=total();return t?Math.round(filled()/t*100):0;};
+const zPct=z=>{const it=z.sections.flatMap(s=>s.items);const f=it.filter(i=>isFilled(V[i.id])).length;return it.length?Math.round(f/it.length*100):0;};
+const sPct=s=>{const f=s.items.filter(i=>isFilled(V[i.id])).length;return s.items.length?Math.round(f/s.items.length*100):0;};
 
-function showToast(msg, type) {
-  const t=document.getElementById("toast"); t.textContent=msg; t.className="toast show "+type;
-  setTimeout(()=>t.className="toast",3000);
-}
+function getDate(){const d=new Date();return d.toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short",year:"numeric"});}
+function getISO(){return new Date().toISOString();}
+function toast(m,t){const e=document.getElementById("toast");e.textContent=m;e.className="toast show "+t;setTimeout(()=>e.className="toast",3000);}
 
-// ─── RENDER ─────────────────────────────────────────
-function renderTurnos() {
-  const box=document.getElementById("turnoBox");
-  box.innerHTML=["Mañana","Tarde","Noche"].map(t=>
-    `<button class="turno-btn${currentTurno===t?" active":""}" onclick="setTurno('${t}')">${t==="Mañana"?"☀️":t==="Tarde"?"🌅":"🌙"} ${t}</button>`
+// ── RENDER ──
+function R(){rDate();rTurnos();rZones();rSecs();rBody();rFooter();}
+function rDate(){document.getElementById("dateBadge").textContent=getDate();}
+function rTurnos(){
+  document.getElementById("turnoGroup").innerHTML=["Mañana","Tarde","Noche"].map(t=>
+    `<button class="turno-btn${curTurno===t?" active":""}" onclick="curTurno='${t}';rTurnos()">${t==="Mañana"?"☀️":t==="Tarde"?"🌅":"🌙"} ${t}</button>`
   ).join("");
 }
-
-function renderZoneTabs() {
-  const bar=document.getElementById("zoneBar");
-  bar.innerHTML=ZONES.map(z=>{
-    const zp=zonePct(z);
-    return `<div class="zone-tab${currentZone===z.id?" active":""}" style="${currentZone===z.id?`border-bottom-color:${z.color}`:""}" onclick="setZone('${z.id}')">${z.short}${zp>0?`<span class="zpct" style="color:${zp===100?"#4ade80":"#60a5fa"}">${zp}%</span>`:""}</div>`;
+function rZones(){
+  const nav=document.getElementById("zoneNav");
+  nav.innerHTML=ZONES.map(z=>{
+    const p=zPct(z);
+    return `<div class="zone-chip${curZone===z.id?" active":""}" style="${curZone===z.id?"border-bottom-color:"+z.color+";color:"+z.color:""}" onclick="pickZone('${z.id}')">${z.short}${p>0?`<span class="zp" style="color:${p===100?"var(--accent)":"var(--blue)"}">${p}%</span>`:""}</div>`;
   }).join("");
 }
-
-function renderBody() {
-  const z=ZONES.find(x=>x.id===currentZone);
-  if(!z) return;
+function rSecs(){
+  const z=ZONES.find(x=>x.id===curZone);if(!z)return;
+  const nav=document.getElementById("secNav");
+  nav.innerHTML=z.sections.map(s=>{
+    const p=sPct(s);
+    const dotColor=p===100?"var(--accent)":p>0?"var(--blue)":"var(--text-muted)";
+    return `<div class="sec-chip${curSec===s.id?" active":""}" onclick="pickSec('${s.id}')">${s.name}<span class="sp" style="background:${dotColor}"></span></div>`;
+  }).join("");
+}
+function rBody(){
+  const z=ZONES.find(x=>x.id===curZone);if(!z)return;
+  const s=z.sections.find(x=>x.id===curSec);if(!s)return;
+  const p=sPct(s);
   const body=document.getElementById("bodyEl");
-  let html="";
-  for(const sec of z.sections) {
-    const sp=secPct(sec);
-    html+=`<div class="sec-header" style="background:linear-gradient(135deg,${z.color}18,${z.color}08);border-left:4px solid ${z.color}"><span>${sec.name}</span><span class="sec-badge" style="background:${sp===100?"#16a34a":sp>0?"#1e40af":"#1e293b"};color:${sp>0?"#fff":"#64748b"}">${sp}%</span></div>`;
-    for(const item of sec.items) {
-      const filled=isFilled(vals[item.id]);
-      html+=`<div class="item${filled?" filled":""}" id="row_${item.id}">`;
-      html+=`<div class="item-label"><span class="item-dot"></span><span>${item.label}</span></div>`;
-      if(item.note) html+=`<div class="item-note">📋 ${item.note}</div>`;
-      html+=`<div class="item-ctrl">${renderControl(item)}</div>`;
-      html+=`<div class="photo-row"><button class="photo-btn" onclick="triggerPhoto('${item.id}')">📷 Foto</button><input type="file" accept="image/*" capture="environment" id="file_${item.id}" style="display:none" onchange="addPhoto('${item.id}',this)"><span id="thumbs_${item.id}">${renderThumbs(item.id)}</span></div>`;
-      html+=`</div>`;
-    }
+  let h=`<div class="sec-title-bar"><span class="sec-title-text">${s.name}</span><span class="sec-title-badge" style="background:${p===100?"var(--accent-dark)":p>0?"var(--blue-dark)":"var(--bg-elevated)"};color:${p>0?"#fff":"var(--text-muted)"}">${p}% · ${s.items.filter(i=>isFilled(V[i.id])).length}/${s.items.length}</span></div>`;
+  for(const it of s.items){
+    const f=isFilled(V[it.id]);
+    h+=`<div class="item${f?" filled":""}" id="r_${it.id}">`;
+    h+=`<div class="item-head"><span class="item-indicator"></span><span class="item-label">${it.label}</span>`;
+    if(it.limit)h+=`<span class="item-limit">${it.limit}</span>`;
+    h+=`</div>`;
+    if(it.note)h+=`<div class="item-note">📋 ${it.note}</div>`;
+    h+=`<div class="item-ctrl">${ctrl(it)}</div>`;
+    h+=`<div class="photo-row"><button class="photo-btn" onclick="document.getElementById('f_${it.id}').click()">📷 Foto</button><input type="file" accept="image/*" capture="environment" id="f_${it.id}" style="display:none" onchange="addP('${it.id}',this)"><span id="th_${it.id}">${thumbs(it.id)}</span></div>`;
+    h+=`</div>`;
   }
-  html+=`<div class="obs-area"><div class="obs-title">📝 Observaciones del turno</div><textarea class="obs-textarea" id="obsArea" placeholder="Notas adicionales..." oninput="obs=this.value">${obs}</textarea></div>`;
-  body.innerHTML=html;
+  h+=`<div class="obs-wrap"><div class="obs-label">📝 Observaciones del turno</div><textarea class="obs-textarea" placeholder="Notas adicionales..." oninput="obs=this.value">${obs}</textarea></div>`;
+  body.innerHTML=h;
+  body.scrollTop=0;
+}
+function ctrl(it){
+  const v=V[it.id];
+  if(it.type==="ok")return`<div class="btn-pair"><button class="btn-ok${v==="OK"?" on":""}" onclick="sv('${it.id}',${v==="OK"?"null":"'OK'"})">OK</button><button class="btn-nok${v==="NOK"?" on":""}" onclick="sv('${it.id}',${v==="NOK"?"null":"'NOK'"})">NOK</button></div>`;
+  if(it.type==="yn")return`<div class="btn-pair"><button class="btn-si${v==="SÍ"?" on":""}" onclick="sv('${it.id}',${v==="SÍ"?"null":"'SÍ'"})">SÍ</button><button class="btn-no${v==="NO"?" on":""}" onclick="sv('${it.id}',${v==="NO"?"null":"'NO'"})">NO</button></div>`;
+  if(it.type==="br")return`<div class="btn-pair"><button class="btn-bl${v==="Blanco"?" on":""}" onclick="sv('${it.id}',${v==="Blanco"?"null":"'Blanco'"})">Blanco</button><button class="btn-rj${v==="Rojo"?" on":""}" onclick="sv('${it.id}',${v==="Rojo"?"null":"'Rojo'"})">Rojo</button></div>`;
+  if(it.type==="num")return`<div class="num-wrap"><input class="num-input" type="text" inputmode="decimal" value="${v||""}" placeholder="—" oninput="svq('${it.id}',this.value)"></div>`;
+  if(it.type==="text")return`<input class="txt-input" type="text" value="${v||""}" placeholder="Escribir..." oninput="svq('${it.id}',this.value)">`;
+  if(it.type==="sel"){const sel=v||[];return`<div class="sel-row">${it.options.map(o=>`<button class="sel-btn${sel.includes(o)?" on":""}" onclick="tgl('${it.id}','${o}')">${o}</button>`).join("")}</div>`;}
+  return"";
+}
+function thumbs(id){return(P[id]||[]).map(p=>`<img src="${p}" class="photo-thumb">`).join("");}
+function rFooter(){
+  const p=pct();
+  document.getElementById("fPct").textContent=p+"%";
+  document.getElementById("fFill").style.width=p+"%";
+  document.getElementById("fFill").className="f-fill"+(p===100?" done":"");
+  document.getElementById("fCount").textContent=filled()+"/"+total();
+  document.getElementById("fSend").className="f-send"+(p>0?" ready":"");
 }
 
-function renderControl(item) {
-  const v=vals[item.id];
-  if(item.type==="ok") return `<div class="btn-row"><button class="btn-ok${v==="OK"?" active":""}" onclick="setVal('${item.id}',${v==="OK"?"null":"'OK'"})">OK</button><button class="btn-nok${v==="NOK"?" active":""}" onclick="setVal('${item.id}',${v==="NOK"?"null":"'NOK'"})">NOK</button></div>`;
-  if(item.type==="yn") return `<div class="btn-row"><button class="btn-yn${v==="SÍ"?" active-si":""}" onclick="setVal('${item.id}',${v==="SÍ"?"null":"'SÍ'"})">SÍ</button><button class="btn-yn${v==="NO"?" active-no":""}" onclick="setVal('${item.id}',${v==="NO"?"null":"'NO'"})">NO</button></div>`;
-  if(item.type==="br") return `<div class="btn-row"><button class="btn-br${v==="Blanco"?" active-b":""}" onclick="setVal('${item.id}',${v==="Blanco"?"null":"'Blanco'"})">Blanco</button><button class="btn-br${v==="Rojo"?" active-r":""}" onclick="setVal('${item.id}',${v==="Rojo"?"null":"'Rojo'"})">Rojo</button></div>`;
-  if(item.type==="num") return `<div class="num-wrap"><input class="num-input" type="text" inputmode="decimal" value="${v||""}" placeholder="—" oninput="setValQuiet('${item.id}',this.value)" style="${item.limit?"padding-right:100px":""}">${item.limit?`<span class="num-limit">${item.limit}</span>`:""}</div>`;
-  if(item.type==="text") return `<input class="text-input" type="text" value="${v||""}" placeholder="Escribir..." oninput="setValQuiet('${item.id}',this.value)">`;
-  if(item.type==="sel") {
-    const sel=v||[];
-    return `<div class="sel-row">${item.options.map(o=>`<button class="sel-btn${sel.includes(o)?" active":""}" onclick="toggleSel('${item.id}','${o}')">${o}</button>`).join("")}</div>`;
-  }
-  return "";
-}
+// ── ACTIONS ──
+function pickZone(id){curZone=id;const z=ZONES.find(x=>x.id===id);curSec=z.sections[0].id;rZones();rSecs();rBody();rFooter();}
+function pickSec(id){curSec=id;rSecs();rBody();}
+function sv(id,v){V[id]=v;upRow(id);rFooter();rZones();rSecs();rBody();}
+function svq(id,v){V[id]=v||null;rFooter();rZones();}
+function tgl(id,o){let a=V[id]||[];const i=a.indexOf(o);if(i>=0)a.splice(i,1);else a=[...a,o];V[id]=a.length?a:null;upRow(id);rFooter();rZones();rSecs();rBody();}
+function upRow(id){/* handled by rBody */}
+function addP(id,inp){const f=inp.files?.[0];if(!f)return;if(!P[id])P[id]=[];P[id].push(URL.createObjectURL(f));document.getElementById("th_"+id).innerHTML=thumbs(id);inp.value="";}
 
-function renderThumbs(id) {
-  return (pics[id]||[]).map(p=>`<img src="${p}" class="photo-thumb">`).join("");
-}
-
-function updateFooter() {
-  const p=globalPct(),f=filledCount(),t=totalCount();
-  document.getElementById("progPct").textContent=p+"%";
-  document.getElementById("progFill").style.width=p+"%";
-  document.getElementById("progFill").className="prog-fill"+(p===100?" done":"");
-  document.getElementById("progCount").textContent=f+"/"+t;
-  const btn=document.getElementById("sendBtn");
-  btn.className="send-btn"+(p>0?" ready":"");
-}
-
-function renderAll() { renderTurnos(); renderZoneTabs(); renderBody(); updateFooter(); }
-
-// ─── ACTIONS ────────────────────────────────────────
-function setTurno(t) { currentTurno=t; renderTurnos(); }
-function setZone(id) { currentZone=id; renderZoneTabs(); renderBody(); document.getElementById("bodyEl").scrollTop=0; }
-
-function setVal(id,v) {
-  vals[id]=v;
-  // re-render just that row and update footer+tabs
-  const row=document.getElementById("row_"+id);
-  if(row) { row.className="item"+(isFilled(v)?" filled":""); row.querySelector(".item-dot").style.background=isFilled(v)?"#4ade80":"#334155"; row.querySelector(".item-ctrl").innerHTML=renderControl(allItems().find(x=>x.id===id)); }
-  updateFooter(); renderZoneTabs();
-}
-
-function setValQuiet(id,v) {
-  vals[id]=v||null;
-  const row=document.getElementById("row_"+id);
-  if(row) { const f=isFilled(vals[id]); row.className="item"+(f?" filled":""); row.querySelector(".item-dot").style.background=f?"#4ade80":"#334155"; }
-  updateFooter(); renderZoneTabs();
-}
-
-function toggleSel(id,opt) {
-  let arr=vals[id]||[];
-  const i=arr.indexOf(opt);
-  if(i>=0) arr.splice(i,1); else arr=[...arr,opt];
-  vals[id]=arr.length?arr:null;
-  const item=allItems().find(x=>x.id===id);
-  const row=document.getElementById("row_"+id);
-  if(row&&item) { const f=isFilled(vals[id]); row.className="item"+(f?" filled":""); row.querySelector(".item-dot").style.background=f?"#4ade80":"#334155"; row.querySelector(".item-ctrl").innerHTML=renderControl(item); }
-  updateFooter(); renderZoneTabs();
-}
-
-function triggerPhoto(id) { document.getElementById("file_"+id)?.click(); }
-function addPhoto(id,input) {
-  const f=input.files?.[0];
-  if(!f) return;
-  if(!pics[id]) pics[id]=[];
-  pics[id].push(URL.createObjectURL(f));
-  document.getElementById("thumbs_"+id).innerHTML=renderThumbs(id);
-  input.value="";
-}
-
-// ─── SEND ───────────────────────────────────────────
-async function handleSend() {
-  const btn=document.getElementById("sendBtn");
-  if(btn.classList.contains("sending")) return;
-  btn.classList.add("sending"); btn.textContent="Enviando...";
-
-  const payload = {
-    fecha: new Date().toISOString(),
-    turno: currentTurno,
-    observaciones: obs,
-    valores: vals,
-    fotos_count: Object.keys(pics).reduce((a,k)=>{ a[k]=(pics[k]||[]).length; return a; },{}),
-    total_puntos: totalCount(),
-    puntos_rellenados: filledCount(),
-  };
-
-  let ok = false;
-
-  // ── ENVÍO A SUPABASE ──
-  if (SUPABASE_URL && SUPABASE_KEY) {
-    try {
-      const res = await fetch(SUPABASE_URL + "/rest/v1/" + SUPABASE_TABLE, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY,
-          "Prefer": "return=minimal"
-        },
-        body: JSON.stringify({
-          fecha: payload.fecha,
-          turno: payload.turno,
-          observaciones: payload.observaciones,
-          valores: payload.valores,
-          fotos_count: payload.fotos_count,
-          total_puntos: payload.total_puntos,
-          puntos_rellenados: payload.puntos_rellenados,
-        })
-      });
-      if (res.ok) { ok=true; }
-      else { showToast("Error al enviar: "+res.status,"err"); }
-    } catch(e) { showToast("Sin conexión. Guardado local.","err"); }
-  } else {
-    console.log("📤 RONDA (sin Supabase configurado):", payload);
-    ok = true;
-  }
-
-  // Guardar copia local siempre
-  try { localStorage.setItem("ronda_backup_"+Date.now(), JSON.stringify(payload)); } catch(e){}
-
-  btn.classList.remove("sending"); btn.textContent="📤 ENVIAR";
-  if(ok) {
-    document.getElementById("sentSub").textContent=`Turno ${currentTurno} · ${new Date().toLocaleDateString("es-ES")} · ${filledCount()}/${totalCount()} puntos`;
-    document.getElementById("sentScreen").classList.add("show");
-    if(SUPABASE_URL) showToast("✅ Enviado a la base de datos","ok");
-    else showToast("✅ Ronda guardada (configura Supabase para envío cloud)","ok");
+// ── SEND ──
+async function doSend(){
+  const btn=document.getElementById("fSend");
+  if(btn.classList.contains("sending"))return;
+  btn.classList.add("sending");btn.textContent="ENVIANDO...";
+  const payload={fecha:getISO(),fecha_display:getDate(),turno:curTurno,observaciones:obs,valores:V,fotos_count:Object.keys(P).reduce((a,k)=>{a[k]=(P[k]||[]).length;return a;},{}),total_puntos:total(),puntos_rellenados:filled()};
+  let ok=false;
+  if(SUPABASE_URL&&SUPABASE_KEY){
+    try{
+      const r=await fetch(SUPABASE_URL+"/rest/v1/"+TABLE,{method:"POST",headers:{"Content-Type":"application/json",apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,Prefer:"return=minimal"},body:JSON.stringify(payload)});
+      if(r.ok)ok=true;else toast("Error: "+r.status,"err");
+    }catch(e){toast("Sin conexión. Guardado local.","err");}
+  }else{console.log("📤 RONDA:",payload);ok=true;}
+  try{localStorage.setItem("ronda_"+Date.now(),JSON.stringify(payload));}catch(e){}
+  btn.classList.remove("sending");btn.textContent="ENVIAR";
+  if(ok){
+    document.getElementById("sentInfo").textContent=getDate()+" · Turno "+curTurno+" · "+filled()+"/"+total()+" puntos";
+    document.getElementById("sentOverlay").classList.add("show");
+    toast(SUPABASE_URL?"✅ Enviado a base de datos":"✅ Guardado (configura Supabase)","ok");
   }
 }
+function doReset(){V={};P={};obs="";curZone=ZONES[0].id;curSec=ZONES[0].sections[0].id;document.getElementById("sentOverlay").classList.remove("show");R();}
 
-function resetApp() {
-  vals={}; pics={}; obs=""; currentZone=ZONES[0].id;
-  document.getElementById("sentScreen").classList.remove("show");
-  renderAll();
-}
-
-// ─── INIT ───────────────────────────────────────────
-renderAll();
+// ── INIT ──
+R();
 </script>
 </body>
 </html>
