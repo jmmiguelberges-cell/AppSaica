@@ -564,7 +564,7 @@ function renderBody() {
     html+=`<div class="sec-header" style="background:linear-gradient(135deg,${z.color}18,${z.color}08);border-left:4px solid ${z.color}"><span>${sec.name}</span><span class="sec-badge" style="background:${sp===100?"#16a34a":sp>0?"#1e40af":"#1e293b"};color:${sp>0?"#fff":"#64748b"}">${sp}%</span></div>`;
     for(const item of sec.items) {
       const filled=isFilled(vals[item.id]);
-      html+=`<div class="item${filled?" filled"}" id="row_${item.id}">`;
+      html+=`<div class="item${filled?" filled":""}" id="row_${item.id}">`;
       html+=`<div class="item-label"><span class="item-dot"></span><span>${item.label}</span></div>`;
       if(item.note) html+=`<div class="item-note">📋 ${item.note}</div>`;
       html+=`<div class="item-ctrl">${renderControl(item)}</div>`;
