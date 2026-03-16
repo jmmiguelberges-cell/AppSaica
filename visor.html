@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visor de Rondas — SAICAPAPER</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--dark:#0f172a;--gray:#64748b;--green:#16a34a;--red:#dc2626;--blue:#2563eb;--amber:#d97706}
+body{background:var(--bg);font-family:'Raleway',system-ui,sans-serif;color:var(--dark);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+/* ── TOPBAR ── */
+.topbar{background:#0f172a;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#22d37e,#0ea860);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff}
+.topbar h1{font-size:16px;font-weight:800;color:#22d37e;letter-spacing:2px;text-transform:uppercase}
+.topbar-sub{font-size:12px;color:#64748b;font-weight:600}
+.topbar-actions{display:flex;gap:8px}
+.topbar-actions button{padding:8px 16px;font-size:13px;font-weight:800;border-radius:8px;border:none;cursor:pointer;font-family:inherit}
+.btn-print{background:#1e293b;color:#94a3b8;border:1px solid #334155!important}
+.btn-print:hover{background:#334155;color:#fff}
+.btn-refresh{background:#22d37e;color:#0f172a}
+
+/* ── CONFIG BAR ── */
+.config{background:#fff;border-bottom:1px solid var(--border);padding:16px 24px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.config label{font-size:13px;font-weight:700;color:var(--gray)}
+.config input,.config select{padding:8px 12px;font-size:14px;font-weight:700;border-radius:8px;border:2px solid var(--border);font-family:inherit;background:#f8fafc}
+.config input:focus,.config select:focus{outline:none;border-color:var(--blue)}
+.config .status{margin-left:auto;font-size:13px;font-weight:700;color:var(--gray)}
+
+/* ── REPORT ── */
+.report{max-width:1000px;margin:24px auto;padding:0 16px}
+.report-empty{text-align:center;padding:80px 20px;color:var(--gray);font-size:16px;font-weight:600}
+
+/* ── REPORT HEADER ── */
+.rpt-header{background:#fff;border:2px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.rpt-title{font-size:22px;font-weight:900;color:var(--dark)}
+.rpt-meta{display:flex;gap:20px;flex-wrap:wrap}
+.rpt-meta-item{text-align:center}
+.rpt-meta-label{font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:1px}
+.rpt-meta-value{font-size:16px;font-weight:900;color:var(--dark);margin-top:2px}
+.rpt-turno{display:inline-block;padding:4px 14px;border-radius:20px;font-size:14px;font-weight:900;color:#fff}
+.turno-m{background:#f59e0b}
+.turno-t{background:#f97316}
+.turno-n{background:#6366f1}
+.rpt-progress{width:100%;height:8px;border-radius:4px;background:#e2e8f0;margin-top:12px;overflow:hidden}
+.rpt-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),#06b6d4);transition:width .3s}
+
+/* ── ZONE BLOCK ── */
+.zone-block{background:#fff;border:2px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.zone-header{padding:14px 20px;font-size:16px;font-weight:900;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.zone-badge{font-size:12px;font-weight:800;background:rgba(255,255,255,0.25);padding:3px 10px;border-radius:12px}
+
+/* ── SECTION ── */
+.sec-header{padding:10px 20px;font-size:14px;font-weight:800;color:var(--dark);background:#f1f5f9;border-bottom:1px solid var(--border);border-top:1px solid var(--border);display:flex;justify-content:space-between}
+.sec-badge{font-size:11px;font-weight:800;padding:2px 8px;border-radius:10px}
+.sec-badge.ok{background:#dcfce7;color:var(--green)}
+.sec-badge.partial{background:#dbeafe;color:var(--blue)}
+.sec-badge.empty{background:#f1f5f9;color:var(--gray)}
+
+/* ── ITEMS TABLE ── */
+.items-table{width:100%;border-collapse:collapse}
+.items-table tr{border-bottom:1px solid #f1f5f9}
+.items-table tr:last-child{border-bottom:none}
+.items-table td{padding:10px 20px;font-size:14px;vertical-align:middle}
+.items-table .it-label{font-weight:600;color:#334155;width:60%}
+.items-table .it-limit{font-size:11px;color:var(--gray);font-family:'JetBrains Mono',monospace;font-weight:600}
+.items-table .it-value{text-align:right;font-weight:800;width:40%}
+.val-ok{color:var(--green);background:#f0fdf4;border-radius:6px;padding:4px 12px;display:inline-block}
+.val-nok{color:#fff;background:var(--red);border-radius:6px;padding:4px 12px;display:inline-block}
+.val-si{color:var(--green)}
+.val-no{color:var(--red)}
+.val-num{color:var(--blue);font-family:'JetBrains Mono',monospace}
+.val-text{color:var(--dark);font-style:italic}
+.val-sel{color:var(--blue);font-weight:800}
+.val-blanco{color:#475569;background:#f1f5f9;border-radius:6px;padding:4px 12px;display:inline-block}
+.val-rojo{color:#fff;background:var(--red);border-radius:6px;padding:4px 12px;display:inline-block}
+.val-empty{color:#cbd5e1;font-weight:500;font-style:italic}
+.it-photos{display:flex;gap:4px;justify-content:flex-end;margin-top:4px}
+.it-photos img{width:40px;height:40px;border-radius:6px;object-fit:cover;border:2px solid var(--border);cursor:pointer}
+
+/* ── OBS ── */
+.obs-block{background:#fff;border:2px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.obs-title{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:8px}
+.obs-text{font-size:14px;color:#475569;font-weight:500;white-space:pre-wrap;line-height:1.6}
+
+/* ── PHOTO MODAL ── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:center;justify-content:center;padding:20px;cursor:pointer}
+.modal.show{display:flex}
+.modal img{max-width:100%;max-height:90vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
+
+/* ── RONDA SELECTOR ── */
+.ronda-list{display:flex;gap:8px;flex-wrap:wrap;padding:16px 24px;background:#fff;border-bottom:1px solid var(--border)}
+.ronda-chip{padding:8px 14px;font-size:12px;font-weight:800;border-radius:8px;border:2px solid var(--border);cursor:pointer;background:#f8fafc;color:var(--dark);transition:all .15s}
+.ronda-chip:hover{border-color:var(--blue);background:#eff6ff}
+.ronda-chip.active{border-color:var(--blue);background:var(--blue);color:#fff}
+.ronda-chip .chip-turno{font-size:10px;font-weight:700;opacity:0.7;margin-left:4px}
+
+/* ── NOK SUMMARY ── */
+.nok-summary{background:#fef2f2;border:2px solid #fecaca;border-radius:12px;padding:16px 20px;margin-bottom:16px}
+.nok-title{font-size:14px;font-weight:900;color:var(--red);margin-bottom:8px}
+.nok-item{font-size:13px;font-weight:600;color:#991b1b;padding:3px 0}
+
+/* ── PRINT ── */
+@media print{
+  .topbar,.config,.ronda-list,.topbar-actions{display:none!important}
+  .report{margin:0;padding:0;max-width:100%}
+  .zone-block,.rpt-header,.obs-block,.nok-summary{break-inside:avoid;page-break-inside:avoid}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-icon">SP</div>
+    <div>
+      <h1>Saicapaper</h1>
+      <div class="topbar-sub">Visor de Informes de Ronda</div>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir / PDF</button>
+    <button class="btn-refresh" onclick="loadRondas()">🔄 Actualizar</button>
+  </div>
+</div>
+
+<!-- CONFIG -->
+<div class="config">
+  <div>
+    <label>Supabase URL</label><br>
+    <input type="text" id="cfgUrl" placeholder="https://xxx.supabase.co" style="width:280px" oninput="saveConfig()">
+  </div>
+  <div>
+    <label>API Key (anon public)</label><br>
+    <input type="text" id="cfgKey" placeholder="eyJhbG..." style="width:280px" oninput="saveConfig()">
+  </div>
+  <div>
+    <label>Filtrar turno</label><br>
+    <select id="cfgTurno" onchange="filterRondas()">
+      <option value="">Todos</option>
+      <option value="Mañana">Mañana</option>
+      <option value="Tarde">Tarde</option>
+      <option value="Noche">Noche</option>
+    </select>
+  </div>
+  <div class="status" id="statusText">Configura Supabase para cargar datos</div>
+</div>
+
+<!-- RONDA LIST -->
+<div class="ronda-list" id="rondaList"></div>
+
+<!-- REPORT -->
+<div class="report" id="reportArea">
+  <div class="report-empty">Configura la conexión a Supabase y pulsa Actualizar</div>
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="modal" id="photoModal" onclick="this.classList.remove('show')">
+  <img id="modalImg" src="">
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   ZONE DATA (same as the app)
+   ══════════════════════════════════════════ */
+const ZONES=[
+{id:"mb",name:"MB / Desulf. / Lodos",color:"#10b981",sections:[
+{id:"thiopaqs",name:"Thiopaqs",items:[
+{id:"thiopaq_serv",label:"Thiopaq en servicio",type:"sel"},{id:"p_imp_sopl",label:"P impulsión soplante (bar)",type:"num",limit:"<0,7"},
+{id:"p_sello",label:"P sello (bar)",type:"num",limit:">1,5"},{id:"q_sello",label:"Q sello (l/min)",type:"num",limit:">1"},
+{id:"flujos_anal",label:"Flujost. analizadores (leds)",type:"num",limit:">6"},
+{id:"potes_cond",label:"Potes condensado ANATRAC",type:"ok"},{id:"thiopaq_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"sopl_desulf",name:"Sopl. Desulfuración",items:[
+{id:"sopl_d_serv",label:"Soplante en servicio",type:"sel"},{id:"sopl_d_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"sopl_biogas",name:"Sopl. Biogás",items:[
+{id:"43b413",label:"43-B-413",type:"ok"},{id:"343b413",label:"343-B-413",type:"ok"},
+{id:"443b413_1",label:"443-B-413.1",type:"ok"},{id:"443b413_2",label:"443-B-413.2",type:"ok"},
+{id:"sopl_b_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"foso_azufre",name:"Foso Azufre",items:[
+{id:"nivel_balsas",label:"Nivel balsas",type:"num",limit:"<30%"},{id:"foso_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"pl_lodos",name:"Planta Lodos",items:[
+{id:"p_aire_345",label:"P aire 345-C-418 (bar)",type:"num",limit:"6,1/6,5"},{id:"p_aceite_340d",label:"P aceite 340-D-305 (bar)",type:"num",limit:"<300"},
+{id:"giro_rasc",label:"Giro rascador 340-C-381",type:"ok"},{id:"asp_agua",label:"Aspecto agua clarificada",type:"ok"},
+{id:"p_imp_384",label:"P impul. 340-P-384 (bar)",type:"num",limit:">2,5"},{id:"p_imp_380",label:"P impul. 340-P-380 (bar)",type:"num",limit:">0,7"},
+{id:"niv_fango",label:"Nivel fango 340-C-381",type:"sel"},{id:"lodos_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
+]},
+{id:"ptas",name:"PTAs",color:"#0ea5e9",sections:[
+{id:"s2",name:"Pretrat. S2",items:[{id:"s2_balsa",label:"Balsa",type:"ok"},{id:"s2_dec",label:"Decantador",type:"ok"},{id:"s2_filt",label:"Filtros arena",type:"ok"},{id:"s2_fecl3",label:"Bombas FeCl₃ 40-P-435",type:"sel"},{id:"s2_nacl",label:"Bombas NaCl 40-P-436",type:"sel"},{id:"s2_dos",label:"Dosif. NaCl corona dec.",type:"ok"},{id:"s2_fangos",label:"Bomba Fangos 40-P-431",type:"sel"},{id:"s2_agit",label:"Agitador",type:"ok"},{id:"s2_bern",label:"Filtro Bernouilli F-407.2",type:"ok"},{id:"s2_turb",label:"Turbidez sal. dec. (NTU)",type:"num",limit:"<4"},{id:"s2_cloro",label:"Cloro 40-QT-003.2 (ppm)",type:"num",limit:"0,2/1,5"},{id:"s2_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"s3",name:"Pretrat. S3",items:[{id:"s3_dec",label:"Decantador",type:"ok"},{id:"s3_filt",label:"Filtros arena",type:"ok"},{id:"s3_fecl3",label:"Bomba FeCl₃ 340-P-435",type:"sel"},{id:"s3_nacl",label:"Bomba NaCl 340-P-436",type:"sel"},{id:"s3_dos",label:"Dosif. NaCl corona dec.",type:"ok"},{id:"s3_nacl2",label:"Bomba NaCl 340-P-436 (2ª)",type:"sel"},{id:"s3_dosfilt",label:"Dosif. salida filtros arena",type:"ok"},{id:"s3_fangos",label:"Bomba Fangos 340-P-431",type:"sel"},{id:"s3_agit",label:"Agitador",type:"ok"},{id:"s3_bern",label:"Filtro Bernouilli F-407.2",type:"ok"},{id:"s3_turb",label:"Turbidez sal. dec. (NTU)",type:"num",limit:"<4"},{id:"s3_cl003",label:"Cloro 340-QT-003 (ppm)",type:"num",limit:"0,2/1,5"},{id:"s3_cl003b",label:"Cloro 340-QT-003.2 (ppm)",type:"num",limit:"0,2/1,5"},{id:"s3_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"s4",name:"Pretrat. S4",items:[{id:"s4_balsa",label:"Balsa",type:"ok"},{id:"s4_dec",label:"Decantador",type:"ok"},{id:"s4_filt",label:"Filtros arena",type:"ok"},{id:"s4_fecl3",label:"Bomba FeCl₃ 440-P-435",type:"sel"},{id:"s4_nacl",label:"Bomba NaCl 440-P-436",type:"sel"},{id:"s4_dos",label:"Dosif. NaCl corona dec.",type:"ok"},{id:"s4_nacl2",label:"Bomba NaCl 440-P-436 (2ª)",type:"sel"},{id:"s4_dosfilt",label:"Dosif. salida filtros arena",type:"ok"},{id:"s4_fangos",label:"Bomba Fangos 440-P-431",type:"sel"},{id:"s4_agit76",label:"Agitador (vel. 76)",type:"ok"},{id:"s4_bern",label:"Filtro Bernouilli F-407.2",type:"ok"},{id:"s4_turb",label:"Turbidez sal. dec. (NTU)",type:"num",limit:"<4"},{id:"s4_cl003",label:"Cloro 440-QT-003 (ppm)",type:"num",limit:"0,2/1,5"},{id:"s4_cl003b",label:"Cloro 440-QT-003.2 (ppm)",type:"num",limit:"0,2/1,5"},{id:"s4_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"pve",name:"Pretrat. PVE",items:[{id:"pve_dec",label:"Decantador",type:"ok"},{id:"pve_fecl3",label:"Bomba FeCl₃ (80%) 440-P-435",type:"sel"},{id:"pve_nacl",label:"Bomba NaCl (60%) 440-P-436",type:"sel"},{id:"pve_agit40",label:"Agitador (vel. 40)",type:"ok"},{id:"pve_rasc",label:"Rascador fondo",type:"ok"},{id:"pve_doscl",label:"Dosif. cloro corona dec.",type:"ok"},{id:"pve_niv",label:"Nivel manto decantador",type:"num",limit:"14/24"},{id:"pve_turbs",label:"Turbidez sal. (NTU)",type:"num",limit:"<4"},{id:"pve_turbe",label:"Turbidez ent. (NTU)",type:"num",limit:"<10"},{id:"pve_pref",label:"P refrig coj. agitador (bar)",type:"num",limit:">0,2"},{id:"pve_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"foso",name:"Foso Bombas",items:[{id:"foso_vaso",label:"Vaso Addams vacío",type:"yn"},{id:"foso_bomba",label:"Bomba achique funciona",type:"yn"}]}
+]},
+{id:"cs2",name:"Cogeneración S2",color:"#f59e0b",sections:[
+{id:"cf_tg2",name:"Casa Filtros TG2",items:[{id:"tg2_dpev",label:"ΔP esfera evaporat. (mmca)",type:"num",limit:"<10"},{id:"tg2_dpfi",label:"ΔP esfera filtros (InH₂O)",type:"num",limit:"<3"},{id:"tg2_dpcol",label:"ΔP colum. filtros (mmca)",type:"num",limit:"<75"},{id:"tg2_dpfe",label:"ΔP colum. filt+evap (mmca)",type:"num",limit:"<120"},{id:"tg2_p47",label:"P 47-C-460 ¿recupera? (bar)",type:"num",limit:">6"},{id:"tg2_qev",label:"Q evaporativo (47-FI)",type:"ok"},{id:"tg2_cffrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"tg_tg2",name:"Turbina Gas TG2",items:[{id:"tg2_dpvah",label:"ΔP filtro ext. vahos (kPa)",type:"num",limit:"<10"},{id:"tg2_pvah",label:"P ent. ext. vahos (mbar)",type:"num",limit:"-40/-60"},{id:"tg2_carter",label:"Nivel cárter aceite (3/4)",type:"ok"},{id:"tg2_plub",label:"P aceite lubricación (bar)",type:"num",limit:"≈4,1"},{id:"tg2_pctrl",label:"P aceite control (bar)",type:"num",limit:"≈88"},{id:"tg2_pdisp",label:"P aceite disparo (bar)",type:"num",limit:"≈3,9"},{id:"tg2_dpfl",label:"ΔP filtro lubricación (bar)",type:"num",limit:"0"},{id:"tg2_dpfc",label:"ΔP filtro control (bar)",type:"num",limit:"0"},{id:"tg2_haz",label:"HAZGAS — Detectores (1,2,3)",type:"ok"},{id:"tg2_flujo",label:"Medidores flujo (>5)",type:"ok"},{id:"tg2_nott4",label:"NOTIFIER trafo T4",type:"ok"},{id:"tg2_nottg",label:"NOTIFIER TG2",type:"ok"},{id:"tg2_comp",label:"Comp. AUX/Vahos/TG/RED/ALT — FRV",type:"ok"}]},
+{id:"a502",name:"Armario A502",items:[{id:"a502_al",label:"Alarmas",type:"text"},{id:"a502_led",label:"Indicadores (leds)",type:"text"},{id:"a502_test",label:"Tª estator 1-6 (Cº) MAX",type:"num",limit:"<140"},{id:"a502_tcal",label:"Tª aire caliente gen. (Cº)",type:"num",limit:"<90"},{id:"a502_tfri",label:"Tª aire frío gen. (Cº)",type:"num",limit:"<60"}]},
+{id:"tv3",name:"Turbina Vapor TV3",items:[{id:"tv3_dplub",label:"ΔP filtro aceite lubricación",type:"br"},{id:"tv3_carter",label:"Nivel cárter aceite (>1/2)",type:"ok"},{id:"tv3_pvap",label:"P vapor sellos (mbar)",type:"num",limit:"< -40"},{id:"tv3_pimp",label:"P imp 48-P-450.5 (bar)",type:"num",limit:"0,7/1,2"},{id:"tv3_intac",label:"Intercambiador aceite",type:"sel"},{id:"tv3_tas",label:"Tª agua sal. (ºC)",type:"num",limit:"<55"},{id:"tv3_tcs",label:"Tª aceite sal. (ºC)",type:"num",limit:"<30"},{id:"tv3_potes",label:"Potes vaho aceite",type:"ok"},{id:"tv3_intal",label:"Intercambiador alternador",type:"sel"},{id:"tv3_plub",label:"P aceite lubricación (bar)",type:"num",limit:"1,5/2"},{id:"tv3_dpctrl",label:"ΔP filtro aceite control",type:"br"},{id:"tv3_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"arm_tv3",name:"Armarios TV3",items:[{id:"atv3_vib",label:"Armario vibrac. SCD-40",type:"text"},{id:"atv3_sinc",label:"Armario sinc. y alar. SC S2",type:"ok"},{id:"atv3_cos",label:"COS φ TV3 SC S2",type:"text"},{id:"atv3_not",label:"NOTIFIER TV3 SC S2",type:"ok"}]},
+{id:"c10",name:"Caldera C10",items:[{id:"c10_411",label:"Nivel 41-C-411 (alim)",type:"ok"},{id:"c10_409",label:"Nivel 41-C-409 (cond)",type:"ok"},{id:"c10_455",label:"Nivel 46-C-455 (CRC)",type:"ok"},{id:"c10_441",label:"Nivel 41-C-441 AP (x2)",type:"ok"},{id:"c10_442",label:"Nivel 41-C-442 BP (x2)",type:"ok"},{id:"c10_byp",label:"Bypass apagallamas BG C10",type:"ok"},{id:"c10_pf",label:"Purga filtro 46-VM-6930",type:"ok"},{id:"c10_pg37",label:"Purgador BG 46-VM-6937",type:"ok"},{id:"c10_gn",label:"Purgas GN piloto P1 C10 (x4)",type:"ok"},{id:"c10_sell",label:"P. sellado 46-PI-410 (bar)",type:"num"},{id:"c10_404",label:"Purgador BG (45-Z-404/5)",type:"ok"},{id:"c10_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
+]},
+{id:"cs3",name:"Cogeneración S3",color:"#f97316",sections:[
+{id:"cf_tg3",name:"Casa Filtros TG3",items:[{id:"tg3_dpev",label:"ΔP esfera evaporat.",type:"num",limit:"<10"},{id:"tg3_dpfi",label:"ΔP esfera filtros",type:"num",limit:"<75"},{id:"tg3_dpcol",label:"ΔP colum. filtros",type:"num",limit:"<75"},{id:"tg3_dpfe",label:"ΔP colum. filt+evaP",type:"num",limit:"<150"},{id:"tg3_p347",label:"P 347-C-460 ¿recupera?",type:"num",limit:">6"},{id:"tg3_qev",label:"Q evaporativo (347-FI)",type:"ok"},{id:"tg3_cffrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"tg_tg3",name:"Turbina Gas TG3",items:[{id:"tg3_dpvah",label:"ΔP filtro ext. vahos",type:"num",limit:"12"},{id:"tg3_pvah",label:"P ent. ext. vahos (mbar)",type:"num",limit:"-30/-50"},{id:"tg3_plub",label:"P aceite lubricación (bar)",type:"num",limit:"3,2"},{id:"tg3_phid",label:"P aceite hidráulico (bar)",type:"num",limit:"≈88"},{id:"tg3_dpfl",label:"ΔP filtro lub.",type:"num",limit:"0"},{id:"tg3_dpfh",label:"ΔP filtro hid.",type:"num",limit:"0"},{id:"tg3_haz",label:"HAZGAS — Detectores",type:"ok"},{id:"tg3_flujo",label:"Medidores flujo (>5)",type:"ok"},{id:"tg3_not3t",label:"NOTIFIER trafo 3T4",type:"ok"},{id:"tg3_nottg",label:"NOTIFIER TG3",type:"ok"},{id:"tg3_comp",label:"Comp. AUX/Vahos/TG/RED/ALT — FRV",type:"ok"}]},
+{id:"tv5",name:"Turbina Vapor TV5",items:[{id:"tv5_pvap",label:"P vapor sellos (bar)",type:"num",limit:"< -0,2"},{id:"tv5_ncond",label:"Nivel cond. vapor sellos",type:"num",limit:"40/70"},{id:"tv5_pimp",label:"P imp 348-P-450",type:"ok"},{id:"tv5_potes",label:"Potes vaho aceite 348-B-461",type:"ok"},{id:"tv5_intac",label:"Intercambiador aceite",type:"sel"},{id:"tv5_tas",label:"Tª agua sal. (ºC)",type:"num",limit:"<55"},{id:"tv5_tcs",label:"Tª aceite sal. (ºC)",type:"num",limit:"<30"},{id:"tv5_intal",label:"Intercambiador alternador",type:"sel"},{id:"tv5_dplub",label:"ΔP filtro lubricación",type:"br"},{id:"tv5_plub",label:"P aceite lubricación (bar)",type:"num",limit:"1,5/2"},{id:"tv5_pbom",label:"P aceite bomba ppal. (bar)",type:"num",limit:"8,5/9"},{id:"tv5_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"arm_tv5",name:"Armarios TV5",items:[{id:"atv5_cba",label:"Armario CBA 10 SCD-340",type:"ok"},{id:"atv5_cbb",label:"Armario CBB 10 SCD-340",type:"ok"},{id:"atv5_cha",label:"Armario CHA 10 SCD-340",type:"ok"},{id:"atv5_cos",label:"COS φ TV5 SCD-340",type:"text"},{id:"atv5_not",label:"NOTIFIER TV5 SC S3",type:"ok"}]},
+{id:"neb",name:"Agua Nebulizada",items:[{id:"neb_pb",label:"P. manóm. bombeo (bar)",type:"num",limit:">25"},{id:"neb_n2",label:"P. botellas N₂ (x18) (bar)",type:"num",limit:">200"},{id:"neb_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"c14",name:"Caldera C14",items:[{id:"c14_411",label:"Nivel 341-C-411",type:"ok"},{id:"c14_409",label:"Nivel 341-c-409",type:"ok"},{id:"c14_455",label:"Nivel 346-C-455",type:"ok"},{id:"c14_441",label:"Nivel 341-C-441",type:"ok"},{id:"c14_442",label:"Nivel 341-C-442",type:"ok"},{id:"c14_pf",label:"Purga filtro 346-VM-6746",type:"ok"},{id:"c14_pg44",label:"Purgador BG 346-VM-6744",type:"ok"},{id:"c14_sell",label:"P. sellado refr. C14",type:"num"},{id:"c14_3576",label:"Purga BG 343-VM-3576",type:"ok"},{id:"c14_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
+]},
+{id:"cs4",name:"Cogeneración S4",color:"#ef4444",sections:[
+{id:"cf_tg4",name:"Casa Filtros TG4",items:[{id:"tg4_dpev",label:"ΔP esfera evaporat.",type:"num",limit:"<10"},{id:"tg4_dpfi",label:"ΔP esfera filtros",type:"num",limit:"<75"},{id:"tg4_dpcol",label:"ΔP colum. filtros",type:"num",limit:"<75"},{id:"tg4_dpfe",label:"ΔP colum. filt+evaP",type:"num",limit:"<150"},{id:"tg4_p447",label:"P 447-C-460 ¿recupera?",type:"num",limit:">6"},{id:"tg4_qev",label:"Q evaporativo (447-FI)",type:"ok"},{id:"tg4_cffrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"tg_tg4",name:"Turbina Gas TG4",items:[{id:"tg4_dpvah",label:"ΔP filtro ext. vahos",type:"num",limit:"<10"},{id:"tg4_pvah",label:"P ent. ext. vahos (mbar)",type:"num",limit:"-30/-50"},{id:"tg4_carter",label:"Nivel cárter aceite (3/4)",type:"ok"},{id:"tg4_plub",label:"P aceite lubricación (bar)",type:"num",limit:"3,8"},{id:"tg4_pctrl",label:"P aceite control (bar)",type:"num",limit:"≈92"},{id:"tg4_dpfl",label:"ΔP filtro lubricación",type:"num",limit:"0"},{id:"tg4_dpfc",label:"ΔP filtro control",type:"num",limit:"0"},{id:"tg4_nott4",label:"NOTIFIER trafo 4T4",type:"ok"},{id:"tg4_nottg",label:"NOTIFIER TG4",type:"ok"},{id:"tg4_comp",label:"Comp. AUX/Vahos/TG/RED/ALT — FRV",type:"ok"}]},
+{id:"tv6",name:"Turbina Vapor TV6",items:[{id:"tv6_pvap",label:"P vapor sellos (bar)",type:"num",limit:"<0,2"},{id:"tv6_intac",label:"Intercambiador aceite",type:"sel"},{id:"tv6_tas",label:"Tª agua sal. (ºC)",type:"num",limit:"<55"},{id:"tv6_tcs",label:"Tª aceite sal. (ºC)",type:"num",limit:"<30"},{id:"tv6_intal",label:"Intercambiador alternador",type:"sel"},{id:"tv6_dpfl",label:"ΔP filtro lub. (bar)",type:"num",limit:"<0,5"},{id:"tv6_dpfc",label:"ΔP filtro cont. (bar)",type:"num",limit:"<0,5"},{id:"tv6_plub",label:"P aceite lubricación (bar)",type:"num",limit:"1,5/2"},{id:"tv6_pbom",label:"P aceite bomba ppal. (bar)",type:"num",limit:"8,5/9"},{id:"tv6_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"arm_tv6",name:"Armarios TV6",items:[{id:"atv6_plc",label:"Armario PLC TV6 SCD-440",type:"ok"},{id:"atv6_cbg",label:"Armario +CBG10 SCD-440",type:"ok"},{id:"atv6_cos",label:"COS φ TV6 SCD-340",type:"text"},{id:"atv6_not",label:"NOTIFIER TV6 SC S4",type:"ok"}]},
+{id:"c16",name:"Caldera C16",items:[{id:"c16_411",label:"Nivel 441-C-411",type:"ok"},{id:"c16_409",label:"Nivel 441-c-409",type:"ok"},{id:"c16_455",label:"Nivel 446-C-455",type:"ok"},{id:"c16_441",label:"Nivel 441-C-441",type:"ok"},{id:"c16_442",label:"Nivel 441-C-442",type:"ok"},{id:"c16_pf",label:"Purga filtro 446-VM-6747",type:"ok"},{id:"c16_pg45",label:"Purgador BG 446-VM-6745",type:"ok"},{id:"c16_3607",label:"Purgador BG 446-VM-3607",type:"ok"},{id:"c16_3608",label:"Purgador BG 446-VM-3608",type:"ok"},{id:"c16_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
+]},
+{id:"ax2",name:"Auxiliares S2",color:"#8b5cf6",sections:[
+{id:"comp_s2",name:"Compresores",items:[{id:"ax2_csv",label:"Compresor en servicio",type:"sel"},{id:"ax2_t2e",label:"Tª aire 2ªetapa (ºC)",type:"num",limit:"<46"},{id:"ax2_vib",label:"Vibración etapas (mil)",type:"num",limit:"<25"},{id:"ax2_plub",label:"P aceite lubricación (bar)",type:"num",limit:">1,4"},{id:"ax2_tlub",label:"Tª aceite lubricación (ºC)",type:"num",limit:"30/45"},{id:"ax2_cfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"sec_s2",name:"Secadores",items:[{id:"ax2_torre",label:"Torre en servicio",type:"sel"},{id:"ax2_rocio",label:"Tª p. rocío (ºC)",type:"num",limit:"< -5"},{id:"ax2_pref",label:"Prefiltros",type:"sel"},{id:"ax2_dppf",label:"ΔP prefiltro y postfiltro",type:"ok"},{id:"ax2_sfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"bomb_s2",name:"Bombas Alim.",items:[{id:"ax2_bsv",label:"Bomba en servicio",type:"sel"},{id:"ax2_tcoj",label:"Tª cojinete (ºC)",type:"num",limit:"<90"},{id:"ax2_piap",label:"P impulsión A.P. (bar)",type:"num",limit:"≈90"},{id:"ax2_pibp",label:"P impulsión B.P (bar)",type:"num",limit:"≈38"},{id:"ax2_peq",label:"P equilibrio (bar)",type:"num",limit:"≈1,8"},{id:"ax2_bfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"car_s2",name:"CAR / CCR",items:[{id:"ax2_carb",label:"CAR Bomba",type:"sel"},{id:"ax2_ccrb",label:"CCR Bomba",type:"sel"},{id:"ax2_inter",label:"Intercambiador",type:"sel"},{id:"ax2_td",label:"Tª después H-420 (ºC)",type:"num",limit:"11/35"},{id:"ax2_carfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"cida_s2",name:"CIDA",items:[{id:"ax2_cadena",label:"Cadena en servicio",type:"sel"},{id:"ax2_caudal",label:"Caudal línea (m³/h)",type:"num"},{id:"ax2_cond",label:"Conductividad",type:"num"},{id:"ax2_ph",label:"pH",type:"num"},{id:"ax2_cifrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
+]},
+{id:"ax3",name:"Auxiliares S3",color:"#a855f7",sections:[
+{id:"comp_s3",name:"Compresores",items:[{id:"ax3_csv",label:"Compresor en servicio",type:"sel"},{id:"ax3_t2e",label:"Tª aire etapas (ºC)",type:"num",limit:"<46"},{id:"ax3_vib",label:"Vibración etapas (mil)",type:"num",limit:"<25"},{id:"ax3_plub",label:"P aceite lubricación (bar)",type:"num",limit:">1,4"},{id:"ax3_cfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"bomb_s3",name:"Bombas Alim.",items:[{id:"ax3_bap",label:"Bomba AP",type:"sel"},{id:"ax3_bbp",label:"Bomba BP",type:"sel"},{id:"ax3_pdif",label:"P diferencial filtro (bar)",type:"num",limit:"<0,35"},{id:"ax3_peq",label:"P equilibrio (bar)",type:"num",limit:"≈2,3"},{id:"ax3_bfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"car_s3",name:"CAR / CCR / CRC",items:[{id:"ax3_itv",label:"Intercambiador TV",type:"sel"},{id:"ax3_itg",label:"Intercambiador TG",type:"sel"},{id:"ax3_carb",label:"CAR Bomba",type:"sel"},{id:"ax3_ccrb",label:"CCR Bomba",type:"sel"},{id:"ax3_crcb",label:"CRC Bomba",type:"sel"},{id:"ax3_carfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"pot_s3",name:"Potabilizadora",items:[{id:"ax3_clr1",label:"Cloro red 1 (ppm)",type:"num",limit:"0,15/1"},{id:"ax3_clr2",label:"Cloro red 2 (ppm)",type:"num",limit:"0,15/1"},{id:"ax3_pred",label:"Presión red salida (bar)",type:"num",limit:">3"},{id:"ax3_pfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
+]},
+{id:"ax4",name:"Auxiliares S4",color:"#ec4899",sections:[
+{id:"comp_s4",name:"Compresores",items:[{id:"ax4_csv",label:"Compresor en servicio",type:"sel"},{id:"ax4_t2e",label:"Tª aire etapas (ºC)",type:"num",limit:"<46"},{id:"ax4_vib",label:"Vibración etapas (mil)",type:"num",limit:"<25"},{id:"ax4_plub",label:"P aceite lubricación (bar)",type:"num",limit:">1,4"},{id:"ax4_cfrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"edis_s4",name:"EDIS",items:[{id:"ax4_edisv",label:"EDI en servicio",type:"sel"},{id:"ax4_resist",label:"Resistividad salida (MΩ)",type:"num",limit:">15"},{id:"ax4_tens",label:"Tensión rectificador (V)",type:"num",limit:"<399"},{id:"ax4_corr",label:"Corriente rectificador (A)",type:"num",limit:"10/36"},{id:"ax4_cond",label:"Cond. agua desmi (mS)",type:"num",limit:"<0,06"},{id:"ax4_efrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"osm_s4",name:"Ósmosis",items:[{id:"ax4_dpc",label:"ΔP F.cartuchos (bar)",type:"num",limit:"<0,7"},{id:"ax4_pfilt",label:"P. salida filtración (bar)",type:"num",limit:">2,8"},{id:"ax4_redox",label:"Redox (mV)",type:"num",limit:"<190"},{id:"ax4_sal1",label:"Cond. SAL. Paso1 (µS)",type:"num",limit:"<200"},{id:"ax4_sal2",label:"Cond. SAL. Paso2 (µS)",type:"num",limit:"<30"},{id:"ax4_ofrv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
+]},
+{id:"erm",name:"ERMs / C.Aux",color:"#64748b",sections:[
+{id:"erms",name:"ERM",items:[{id:"erm_mon",label:"Testigo válv. monitor (100%)",type:"text"},{id:"erm_prin",label:"Testigo válv. principal (regulando)",type:"text"},{id:"erm_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]},
+{id:"caux",name:"Calderas Aux.",items:[{id:"caux_p",label:"Presión indicador campo",type:"text"},{id:"caux_niv",label:"Niveles reales",type:"text"},{id:"caux_frv",label:"Fugas / Ruidos / Vibraciones",type:"ok"}]}
+]}
+];
+
+const itemMap={};
+ZONES.forEach(z=>z.sections.forEach(s=>s.items.forEach(it=>{itemMap[it.id]=it;})));
+
+let rondas=[];
+let currentRonda=null;
+
+function saveConfig(){
+  const url=document.getElementById("cfgUrl").value.trim();
+  const key=document.getElementById("cfgKey").value.trim();
+  try{localStorage.setItem("sb_url",url);localStorage.setItem("sb_key",key);}catch(e){}
+}
+function loadConfig(){
+  try{
+    document.getElementById("cfgUrl").value=localStorage.getItem("sb_url")||"";
+    document.getElementById("cfgKey").value=localStorage.getItem("sb_key")||"";
+  }catch(e){}
+}
+
+async function loadRondas(){
+  const url=document.getElementById("cfgUrl").value.trim();
+  const key=document.getElementById("cfgKey").value.trim();
+  if(!url||!key){document.getElementById("statusText").textContent="⚠️ Rellena URL y Key";return;}
+  document.getElementById("statusText").textContent="Cargando...";
+  try{
+    const r=await fetch(url+"/rest/v1/rondas?order=created_at.desc&limit=50",{headers:{apikey:key,Authorization:"Bearer "+key}});
+    if(!r.ok){document.getElementById("statusText").textContent="Error: "+r.status;return;}
+    rondas=await r.json();
+    document.getElementById("statusText").textContent="✅ "+rondas.length+" rondas cargadas";
+    filterRondas();
+  }catch(e){document.getElementById("statusText").textContent="❌ Error de conexión";}
+}
+
+function filterRondas(){
+  const turno=document.getElementById("cfgTurno").value;
+  const filtered=turno?rondas.filter(r=>r.turno===turno):rondas;
+  renderList(filtered);
+  if(filtered.length>0){currentRonda=filtered[0];renderReport(filtered[0]);}
+  else{document.getElementById("reportArea").innerHTML='<div class="report-empty">No hay rondas con ese filtro</div>';}
+}
+
+function renderList(list){
+  const el=document.getElementById("rondaList");
+  el.innerHTML=list.map((r,i)=>{
+    const tc=r.turno==="Mañana"?"turno-m":r.turno==="Tarde"?"turno-t":"turno-n";
+    return `<div class="ronda-chip${currentRonda&&currentRonda.id===r.id?" active":""}" onclick="selectRonda(${i})">${r.fecha_display||new Date(r.fecha).toLocaleDateString("es-ES")}<span class="chip-turno ${tc}">&nbsp;${r.turno}&nbsp;</span></div>`;
+  }).join("");
+}
+
+function selectRonda(i){
+  const turno=document.getElementById("cfgTurno").value;
+  const filtered=turno?rondas.filter(r=>r.turno===turno):rondas;
+  currentRonda=filtered[i];
+  renderList(filtered);
+  renderReport(currentRonda);
+}
+
+function fmtVal(id,val,fotos){
+  if(val==null||val==="")return'<span class="val-empty">— sin dato —</span>';
+  if(val==="OK")return'<span class="val-ok">✓ OK</span>';
+  if(val==="NOK")return'<span class="val-nok">✗ NOK</span>';
+  if(val==="SÍ")return'<span class="val-si">✓ SÍ</span>';
+  if(val==="NO")return'<span class="val-no">✗ NO</span>';
+  if(val==="Blanco")return'<span class="val-blanco">⬜ Blanco</span>';
+  if(val==="Rojo")return'<span class="val-rojo">🔴 Rojo</span>';
+  if(Array.isArray(val))return'<span class="val-sel">'+val.join(", ")+"</span>";
+  const it=itemMap[id];
+  if(it&&(it.type==="num"))return'<span class="val-num">'+val+"</span>";
+  return'<span class="val-text">'+val+"</span>";
+}
+
+function renderReport(r){
+  if(!r)return;
+  const vals=r.valores||{};
+  const fotos=r.fotos||{};
+  const pct=r.total_puntos?Math.round(r.puntos_rellenados/r.total_puntos*100):0;
+  const tc=r.turno==="Mañana"?"turno-m":r.turno==="Tarde"?"turno-t":"turno-n";
+
+  // Count NOKs
+  const noks=[];
+  Object.entries(vals).forEach(([k,v])=>{if(v==="NOK"){const it=itemMap[k];noks.push(it?it.label:k);}});
+
+  let h=`<div class="rpt-header">
+    <div><div class="rpt-title">Informe de Ronda</div>
+    <div class="rpt-progress"><div class="rpt-progress-fill" style="width:${pct}%"></div></div></div>
+    <div class="rpt-meta">
+      <div class="rpt-meta-item"><div class="rpt-meta-label">Fecha</div><div class="rpt-meta-value">${r.fecha_display||new Date(r.fecha).toLocaleDateString("es-ES")}</div></div>
+      <div class="rpt-meta-item"><div class="rpt-meta-label">Turno</div><div class="rpt-turno ${tc}">${r.turno}</div></div>
+      <div class="rpt-meta-item"><div class="rpt-meta-label">Completado</div><div class="rpt-meta-value">${r.puntos_rellenados}/${r.total_puntos} (${pct}%)</div></div>
+      <div class="rpt-meta-item"><div class="rpt-meta-label">NOK</div><div class="rpt-meta-value" style="color:${noks.length?"var(--red)":"var(--green)"}"> ${noks.length}</div></div>
+    </div>
+  </div>`;
+
+  // NOK Summary
+  if(noks.length>0){
+    h+=`<div class="nok-summary"><div class="nok-title">⚠️ ${noks.length} punto${noks.length>1?"s":""} NO OK</div>`;
+    noks.forEach(n=>{h+=`<div class="nok-item">• ${n}</div>`;});
+    h+=`</div>`;
+  }
+
+  // Zones
+  for(const zone of ZONES){
+    const zoneItems=zone.sections.flatMap(s=>s.items);
+    const zoneFilled=zoneItems.filter(it=>vals[it.id]!=null&&vals[it.id]!=="").length;
+    if(zoneFilled===0)continue;
+
+    h+=`<div class="zone-block"><div class="zone-header" style="background:${zone.color}"><span>${zone.name}</span><span class="zone-badge">${zoneFilled}/${zoneItems.length}</span></div>`;
+
+    for(const sec of zone.sections){
+      const secFilled=sec.items.filter(it=>vals[it.id]!=null&&vals[it.id]!=="").length;
+      if(secFilled===0)continue;
+      const sp=Math.round(secFilled/sec.items.length*100);
+      const cls=sp===100?"ok":sp>0?"partial":"empty";
+
+      h+=`<div class="sec-header"><span>${sec.name}</span><span class="sec-badge ${cls}">${sp}%</span></div>`;
+      h+=`<table class="items-table">`;
+
+      for(const it of sec.items){
+        const v=vals[it.id];
+        if(v==null&&v==="")continue;
+        const photoList=fotos[it.id]||[];
+        h+=`<tr><td class="it-label">${it.label}`;
+        if(it.limit)h+=` <span class="it-limit">${it.limit}</span>`;
+        h+=`</td><td class="it-value">${fmtVal(it.id,v,photoList)}`;
+        if(photoList.length>0){
+          h+=`<div class="it-photos">`;
+          photoList.forEach(url=>{h+=`<img src="${url}" onclick="openPhoto('${url}')" title="Ver foto">`;});
+          h+=`</div>`;
+        }
+        h+=`</td></tr>`;
+      }
+      h+=`</table>`;
+    }
+    h+=`</div>`;
+  }
+
+  // Observations
+  if(r.observaciones){
+    h+=`<div class="obs-block"><div class="obs-title">📝 Observaciones</div><div class="obs-text">${r.observaciones}</div></div>`;
+  }
+
+  document.getElementById("reportArea").innerHTML=h;
+}
+
+function openPhoto(url){
+  document.getElementById("modalImg").src=url;
+  document.getElementById("photoModal").classList.add("show");
+}
+
+loadConfig();
+</script>
+</body>
+</html>
