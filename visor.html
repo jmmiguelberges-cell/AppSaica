@@ -447,8 +447,8 @@ async function exportExcel(){
 
   document.getElementById("exportInfo").textContent="Cargando datos...";
 
-  // Fetch with date filter
-  let query=url+"/rest/v1/rondas?order=created_at.asc&fecha=gte."+from+"T00:00:00&fecha=lte."+to+"T23:59:59";
+  // Use created_at for range filtering (proper timestamptz column)
+  let query=url+"/rest/v1/rondas?order=created_at.asc&created_at=gte."+from+"T00:00:00Z&created_at=lte."+to+"T23:59:59Z";
   if(turno)query+="&turno=eq."+encodeURIComponent(turno);
 
   let data;
@@ -461,6 +461,8 @@ async function exportExcel(){
   if(!data.length){document.getElementById("exportInfo").textContent="No hay rondas en ese rango";return;}
 
   document.getElementById("exportInfo").textContent="Generando Excel con "+data.length+" rondas...";
+
+  try{
 
   const wb=XLSX.utils.book_new();
 
@@ -562,6 +564,11 @@ async function exportExcel(){
   const filename="Rondas_"+from+"_a_"+to+(turno?"_"+turno:"")+".xlsx";
   XLSX.writeFile(wb,filename);
   document.getElementById("exportInfo").textContent="✅ "+filename+" descargado ("+data.length+" rondas)";
+
+  }catch(e){
+    console.error("Excel error:",e);
+    document.getElementById("exportInfo").textContent="❌ Error generando Excel: "+e.message;
+  }
 }
 
 initDates();
