@@ -104,12 +104,24 @@ body{background:var(--bg);font-family:'Raleway',system-ui,sans-serif;color:var(-
 
 /* ── PRINT ── */
 @media print{
-  .topbar,.config,.ronda-list,.topbar-actions{display:none!important}
+  .topbar,.config,.ronda-list,.topbar-actions,.export-bar{display:none!important}
   .report{margin:0;padding:0;max-width:100%}
   .zone-block,.rpt-header,.obs-block,.nok-summary{break-inside:avoid;page-break-inside:avoid}
   body{background:#fff}
 }
+
+/* ── EXPORT BAR ── */
+.export-bar{background:#f0fdf4;border-bottom:1px solid #bbf7d0;padding:14px 24px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.export-bar label{font-size:12px;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:0.5px}
+.export-bar input[type=date]{padding:8px 12px;font-size:14px;font-weight:700;border-radius:8px;border:2px solid #86efac;font-family:inherit;background:#fff;color:var(--dark)}
+.export-bar input[type=date]:focus{outline:none;border-color:var(--green)}
+.btn-export{padding:10px 20px;font-size:13px;font-weight:900;border-radius:8px;border:none;cursor:pointer;font-family:inherit;background:#16a34a;color:#fff;letter-spacing:0.5px;transition:all .15s}
+.btn-export:hover{background:#15803d}
+.btn-export:active{transform:scale(0.97)}
+.btn-export:disabled{opacity:0.4;cursor:not-allowed}
+.export-info{font-size:12px;font-weight:700;color:#15803d;margin-left:auto}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -148,6 +160,29 @@ body{background:var(--bg);font-family:'Raleway',system-ui,sans-serif;color:var(-
     </select>
   </div>
   <div class="status" id="statusText">Configura Supabase para cargar datos</div>
+</div>
+
+<!-- EXPORT BAR -->
+<div class="export-bar">
+  <div>
+    <label>Desde</label><br>
+    <input type="date" id="dateFrom">
+  </div>
+  <div>
+    <label>Hasta</label><br>
+    <input type="date" id="dateTo">
+  </div>
+  <div>
+    <label>Turno</label><br>
+    <select id="exportTurno" style="padding:8px 12px;font-size:14px;font-weight:700;border-radius:8px;border:2px solid #86efac;font-family:inherit;background:#fff">
+      <option value="">Todos</option>
+      <option value="Mañana">Mañana</option>
+      <option value="Tarde">Tarde</option>
+      <option value="Noche">Noche</option>
+    </select>
+  </div>
+  <button class="btn-export" onclick="exportExcel()">📊 EXPORTAR EXCEL</button>
+  <div class="export-info" id="exportInfo"></div>
 </div>
 
 <!-- RONDA LIST -->
@@ -389,6 +424,147 @@ function openPhoto(url){
   document.getElementById("modalImg").src=url;
   document.getElementById("photoModal").classList.add("show");
 }
+
+/* ══════════════════════════════════════════
+   EXCEL EXPORT
+   ══════════════════════════════════════════ */
+function initDates(){
+  const today=new Date();
+  const weekAgo=new Date(today);weekAgo.setDate(today.getDate()-7);
+  document.getElementById("dateTo").value=today.toISOString().slice(0,10);
+  document.getElementById("dateFrom").value=weekAgo.toISOString().slice(0,10);
+}
+
+async function exportExcel(){
+  const url=document.getElementById("cfgUrl").value.trim();
+  const key=document.getElementById("cfgKey").value.trim();
+  if(!url||!key){alert("Configura Supabase primero");return;}
+
+  const from=document.getElementById("dateFrom").value;
+  const to=document.getElementById("dateTo").value;
+  const turno=document.getElementById("exportTurno").value;
+  if(!from||!to){alert("Selecciona las fechas");return;}
+
+  document.getElementById("exportInfo").textContent="Cargando datos...";
+
+  // Fetch with date filter
+  let query=url+"/rest/v1/rondas?order=created_at.asc&fecha=gte."+from+"T00:00:00&fecha=lte."+to+"T23:59:59";
+  if(turno)query+="&turno=eq."+encodeURIComponent(turno);
+
+  let data;
+  try{
+    const r=await fetch(query,{headers:{apikey:key,Authorization:"Bearer "+key}});
+    if(!r.ok){document.getElementById("exportInfo").textContent="Error: "+r.status;return;}
+    data=await r.json();
+  }catch(e){document.getElementById("exportInfo").textContent="Error de conexión";return;}
+
+  if(!data.length){document.getElementById("exportInfo").textContent="No hay rondas en ese rango";return;}
+
+  document.getElementById("exportInfo").textContent="Generando Excel con "+data.length+" rondas...";
+
+  const wb=XLSX.utils.book_new();
+
+  /* ── HOJA 1: RESUMEN ── */
+  const resRows=[["INFORME DE RONDAS — SAICAPAPER"],[`Periodo: ${from} a ${to}${turno?" — Turno: "+turno:""}`],[""],
+    ["#","Fecha","Turno","Puntos","Completados","%","NOKs","Observaciones"]
+  ];
+  data.forEach((r,i)=>{
+    const vals=r.valores||{};
+    const noks=Object.values(vals).filter(v=>v==="NOK").length;
+    const pct=r.total_puntos?Math.round(r.puntos_rellenados/r.total_puntos*100):0;
+    resRows.push([i+1, r.fecha_display||r.fecha?.slice(0,10)||"", r.turno, r.total_puntos||0, r.puntos_rellenados||0, pct+"%", noks, r.observaciones||""]);
+  });
+  const wsRes=XLSX.utils.aoa_to_sheet(resRows);
+  wsRes["!cols"]=[{wch:4},{wch:22},{wch:10},{wch:8},{wch:12},{wch:7},{wch:6},{wch:40}];
+  // Merge title
+  wsRes["!merges"]=[{s:{r:0,c:0},e:{r:0,c:7}},{s:{r:1,c:0},e:{r:1,c:7}}];
+  XLSX.utils.book_append_sheet(wb,wsRes,"Resumen");
+
+  /* ── HOJA 2: DETALLE COMPLETO ── */
+  const detRows=[["Fecha","Turno","Zona","Sección","Punto de inspección","Límite","Valor","Estado"]];
+  data.forEach(r=>{
+    const vals=r.valores||{};
+    const fecha=r.fecha_display||r.fecha?.slice(0,10)||"";
+    ZONES.forEach(z=>{
+      z.sections.forEach(s=>{
+        s.items.forEach(it=>{
+          const v=vals[it.id];
+          if(v==null||v==="")return;
+          let display=v;
+          let estado="";
+          if(Array.isArray(v))display=v.join(", ");
+          if(v==="OK")estado="OK";
+          else if(v==="NOK")estado="NOK";
+          else if(v==="SÍ")estado="OK";
+          else if(v==="NO")estado="NOK";
+          detRows.push([fecha, r.turno, z.name, s.name, it.label, it.limit||"", display, estado]);
+        });
+      });
+    });
+  });
+  const wsDet=XLSX.utils.aoa_to_sheet(detRows);
+  wsDet["!cols"]=[{wch:22},{wch:10},{wch:22},{wch:20},{wch:35},{wch:12},{wch:18},{wch:8}];
+  XLSX.utils.book_append_sheet(wb,wsDet,"Detalle");
+
+  /* ── HOJA 3: SOLO NOKs ── */
+  const nokRows=[["PUNTOS NO OK"],[`Periodo: ${from} a ${to}`],[""],
+    ["Fecha","Turno","Zona","Sección","Punto","Fotos"]
+  ];
+  data.forEach(r=>{
+    const vals=r.valores||{};
+    const fotos=r.fotos||{};
+    const fecha=r.fecha_display||r.fecha?.slice(0,10)||"";
+    ZONES.forEach(z=>{
+      z.sections.forEach(s=>{
+        s.items.forEach(it=>{
+          if(vals[it.id]==="NOK"){
+            const flist=(fotos[it.id]||[]).join("\n");
+            nokRows.push([fecha, r.turno, z.name, s.name, it.label, flist]);
+          }
+        });
+      });
+    });
+  });
+  const wsNok=XLSX.utils.aoa_to_sheet(nokRows);
+  wsNok["!cols"]=[{wch:22},{wch:10},{wch:22},{wch:20},{wch:35},{wch:50}];
+  wsNok["!merges"]=[{s:{r:0,c:0},e:{r:0,c:5}},{s:{r:1,c:0},e:{r:1,c:5}}];
+  XLSX.utils.book_append_sheet(wb,wsNok,"NOKs");
+
+  /* ── HOJA POR CADA ZONA ── */
+  ZONES.forEach(z=>{
+    const zRows=[[z.name],[""],["Fecha","Turno","Sección","Punto","Límite","Valor","Estado"]];
+    let hasData=false;
+    data.forEach(r=>{
+      const vals=r.valores||{};
+      const fecha=r.fecha_display||r.fecha?.slice(0,10)||"";
+      z.sections.forEach(s=>{
+        s.items.forEach(it=>{
+          const v=vals[it.id];
+          if(v==null||v==="")return;
+          hasData=true;
+          let display=Array.isArray(v)?v.join(", "):v;
+          let estado=v==="OK"?"OK":v==="NOK"?"NOK":v==="SÍ"?"OK":v==="NO"?"NOK":"";
+          zRows.push([fecha, r.turno, s.name, it.label, it.limit||"", display, estado]);
+        });
+      });
+    });
+    if(hasData){
+      const wsZ=XLSX.utils.aoa_to_sheet(zRows);
+      wsZ["!cols"]=[{wch:22},{wch:10},{wch:20},{wch:35},{wch:12},{wch:18},{wch:8}];
+      wsZ["!merges"]=[{s:{r:0,c:0},e:{r:0,c:6}}];
+      // Sheet name max 31 chars
+      const shName=z.name.length>31?z.name.slice(0,31):z.name;
+      XLSX.utils.book_append_sheet(wb,wsZ,shName);
+    }
+  });
+
+  /* ── DESCARGAR ── */
+  const filename="Rondas_"+from+"_a_"+to+(turno?"_"+turno:"")+".xlsx";
+  XLSX.writeFile(wb,filename);
+  document.getElementById("exportInfo").textContent="✅ "+filename+" descargado ("+data.length+" rondas)";
+}
+
+initDates();
 
 loadConfig();
 </script>
