@@ -555,7 +555,7 @@ async function exportExcel(){
       wsZ["!cols"]=[{wch:22},{wch:10},{wch:20},{wch:35},{wch:12},{wch:18},{wch:8}];
       wsZ["!merges"]=[{s:{r:0,c:0},e:{r:0,c:6}}];
       // Sheet name max 31 chars
-      const shName=z.name.length>31?z.name.slice(0,31):z.name;
+      let shName=z.name.replace(/[\\\/\?\*\[\]:]/g,"-").slice(0,31);
       XLSX.utils.book_append_sheet(wb,wsZ,shName);
     }
   });
